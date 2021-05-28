@@ -61,6 +61,8 @@ func createPopulation(p []byte) {
 
 }
 
+// Build Mating Pool
+
 func main() {
 	// test
 	//s := []byte("to be or not to be")
