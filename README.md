@@ -2,4 +2,5 @@
 
 
 <p> genetic programming stuff </p>
-<p> blah blah infinite monkey theorem  blah blah</p>
+<p> maybe use monte carlo method </p>
+<p> blah blah infinite monkey theorem  </p>
