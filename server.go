@@ -6,7 +6,8 @@ import (
 )
 
 type DNA struct {
-	Phrase []byte
+	Phrase  []byte
+	Fitness float32
 }
 
 // create a DNA
@@ -19,14 +20,33 @@ func createDNA(p []byte) (dna DNA) {
 
 	// set new dna from the random string
 	dna = DNA{
-		Phrase: dummy,
+		Phrase:  dummy,
+		Fitness: measureFitness(p, dummy),
 	}
 
 	// convert back to string just to test
-	myString := string(dummy)
+	myString := string(dna.Phrase)
 
 	//fmt.Println(dummy)
 	fmt.Println(myString)
+	fmt.Println("Fitness : ", dna.Fitness)
+	return
+}
+
+// need to measure the fitness
+func measureFitness(p []byte, dummy []byte) (fitness float32) {
+	score := 0
+	for i := 0; i < len(p); i++ {
+		if p[i] == dummy[i] {
+			score++
+		}
+	}
+
+	//fmt.Println("score : ", score)
+
+	fitness = float32(score) / float32(len(p))
+	//fmt.Println("fitness : ", fitness)
+
 	return
 }
 
@@ -43,18 +63,16 @@ func createPopulation(p []byte) {
 
 func main() {
 	// test
-	s := []byte("this is a test")
+	//s := []byte("to be or not to be")
+	s := []byte("w,qI8Te'$/Z'{&>d98")
 	//createDNA(s)
 	createPopulation(s)
-}
 
-/*
-func handler(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(writer, "Hello World, %s!", request.URL.Path[1:])
-}
+	/*
+		t := []byte("to be dr vot do be")
+		fmt.Println(len(s), len(t))
+		test_fitness := measureFitness(s, t)
+		fmt.Println("test_fitness : ", test_fitness)
+	*/
 
-func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":5000", nil)
 }
-*/
