@@ -64,23 +64,26 @@ func createPopulation(p []byte) (population []DNA) {
 
 // Build Mating Pool
 // TODO: Might be bugged, remember size of pool is > 100
-// TODO: NOTE that 0 DNA objects make it through into the pool -keep them out
+// MIGHT BE FIXED (TODO: NOTE that 0 DNA objects make it through into the pool
+// -keep them out)
 func generateMatingPool(p []byte) {
 	population := createPopulation(p)
 	for i := 0; i < len(population); i++ {
 		fmt.Println(population[i].Fitness)
 	}
 
-	matingPool := make([]DNA, len(population))
-
+	var matingPool []DNA
+	count := 0
 	for j := 0; j < len(population); j++ {
 		// find percentage score
 		n := int(population[j].Fitness * 100)
+		count += n
 		// add this dna N number of times
 		for k := 0; k < n; k++ {
 			matingPool = append(matingPool, population[j])
 		}
 	}
+	fmt.Println("COUNT : ", count)
 
 	// mating pool
 	/*
@@ -101,19 +104,27 @@ func generateMatingPool(p []byte) {
 	parent1 := matingPool[one]
 	parent2 := matingPool[two]
 
-	//fmt.Println("PARENTS 1 & 2 : ", parent1, parent2)
 	child := crossover(parent1, parent2)
+	// just to measure the child's fitness
+	child.Fitness = measureFitness(p, child.Phrase)
+
+	fmt.Println("PARENTS 1 & 2 : ", parent1, parent2)
+	fmt.Println("PARENTS 1 & 2 : ", string(parent1.Phrase), " | ", string(parent2.Phrase))
 	fmt.Println("Child DNA : ", child)
+	fmt.Println("Child DNA : ", string(child.Phrase))
+
 }
 
 // crossover to generate the child DNA
 func crossover(p1 DNA, p2 DNA) (child DNA) {
 	fmt.Println(p1, p2)
-	// child
 
 	// get random midpoint
 	midpoint := rand.Intn(len(p1.Phrase))
 	fmt.Println("midpoint ", midpoint)
+
+	// initialize child phrase size
+	child.Phrase = make([]byte, len(p1.Phrase))
 
 	// perform crossover
 	for i := 0; i < len(p1.Phrase); i++ {
