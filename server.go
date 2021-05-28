@@ -44,10 +44,7 @@ func measureFitness(p []byte, dummy []byte) (fitness float32) {
 		}
 	}
 
-	//fmt.Println("score : ", score)
-
 	fitness = float32(score) / float32(len(p))
-	//fmt.Println("fitness : ", fitness)
 
 	return
 }
@@ -105,6 +102,7 @@ func generateMatingPool(p []byte) {
 	parent2 := matingPool[two]
 
 	child := crossover(parent1, parent2)
+	child.mutate()
 	// just to measure the child's fitness
 	child.Fitness = measureFitness(p, child.Phrase)
 
@@ -137,6 +135,18 @@ func crossover(p1 DNA, p2 DNA) (child DNA) {
 	}
 
 	return
+}
+
+func (child *DNA) mutate() {
+	mutateRate := 0.01
+	for i := 0; i < len(child.Phrase); i++ {
+
+		if rand.Float64() < mutateRate {
+			fmt.Println("CHILD MUTATED")
+			child.Phrase[i] = byte(rand.Intn(95) + 32)
+
+		}
+	}
 }
 
 func main() {
