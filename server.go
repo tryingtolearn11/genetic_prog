@@ -11,21 +11,41 @@ type DNA struct {
 
 // create a DNA
 func createDNA(p []byte) (dna DNA) {
+	// random ascii values into a string
+	dummy := make([]byte, len(p))
 	for i := 0; i < len(p); i++ {
-		p[i] = byte(rand.Intn(95) + 32)
+		dummy[i] = byte(rand.Intn(95) + 32)
 	}
 
-	myString := string(p)
+	// set new dna from the random string
+	dna = DNA{
+		Phrase: dummy,
+	}
 
-	fmt.Println(p)
+	// convert back to string just to test
+	myString := string(dummy)
+
+	//fmt.Println(dummy)
 	fmt.Println(myString)
 	return
+}
+
+func createPopulation(p []byte) {
+	population := []DNA{}
+	for i := 0; i < 100; i++ {
+		organism := createDNA(p)
+		population = append(population, organism)
+	}
+
+	fmt.Println("Size of Population : ", len(population))
+
 }
 
 func main() {
 	// test
 	s := []byte("this is a test")
-	createDNA(s)
+	//createDNA(s)
+	createPopulation(s)
 }
 
 /*
