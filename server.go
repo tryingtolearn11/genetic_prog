@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -50,7 +52,6 @@ func createPopulation(p []byte) (population []DNA) {
 		population = append(population, organism)
 	}
 
-	fmt.Println("Size of Population : ", len(population))
 	return population
 }
 
@@ -96,7 +97,6 @@ func generateMatingPool(p []byte, population []DNA, fit float64) []DNA {
 func crossover(p1 DNA, p2 DNA) (child DNA) {
 	// get random midpoint
 	midpoint := rand.Intn(len(p1.Phrase))
-	//fmt.Println("midpoint ", midpoint)
 
 	// initialize child phrase size
 	child.Phrase = make([]byte, len(p1.Phrase))
@@ -141,13 +141,23 @@ func main() {
 	// for constant random numbers
 	rand.Seed(time.Now().UTC().UnixNano())
 	match := false
-	s := []byte("to be or not to be")
+	gen := 0
+
+	// take from stdin
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter Phrase : ")
+	text, _ := reader.ReadString('\n')
+	m := []byte(text)
+	s := m[:len(m)-1]
+
 	population := createPopulation(s)
 
 	for !match {
+
 		best := successor(population)
-		fmt.Printf("\r best fitness : %2f", best.Fitness)
-		fmt.Println("Phrase : ", string(best.Phrase))
+		fmt.Printf("\r Generations : %d |  Successor Match : %2f", gen, best.Fitness)
+		fmt.Println(" | Phrase : ", string(best.Phrase))
+		gen++
 
 		if bytes.Compare(best.Phrase, s) == 0 {
 			match = true
