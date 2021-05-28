@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 type DNA struct {
@@ -12,6 +13,7 @@ type DNA struct {
 
 // create a DNA
 func createDNA(p []byte) (dna DNA) {
+
 	// random ascii values into a string
 	dummy := make([]byte, len(p))
 	for i := 0; i < len(p); i++ {
@@ -73,7 +75,6 @@ func generateMatingPool(p []byte) {
 	for j := 0; j < len(population); j++ {
 		// find percentage score
 		n := int(population[j].Fitness * 100)
-		fmt.Print(" N : ", n)
 		// add this dna N number of times
 		for k := 0; k < n; k++ {
 			matingPool = append(matingPool, population[j])
@@ -89,11 +90,26 @@ func generateMatingPool(p []byte) {
 
 	fmt.Println("Size of matingPool : ", len(matingPool))
 
+	// parents selection : 2 parents to mimic human reproduction
+	one := rand.Intn(len(matingPool))
+	two := rand.Intn(len(matingPool))
+	fmt.Println("PARENTS 1 & 2 : ", one, two)
+
+	//TODO: Make sure parents are NOT the same values
+
+	parent1 := matingPool[one]
+	parent2 := matingPool[two]
+
+	fmt.Println("PARENTS 1 & 2 : ", parent1, parent2)
 }
 
 func main() {
+	// for constant random numbers
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	// test
 	//s := []byte("to be or not to be")
+
 	s := []byte("w,qI8Te'$/Z'{&>d98")
 	generateMatingPool(s)
 	//createDNA(s)
