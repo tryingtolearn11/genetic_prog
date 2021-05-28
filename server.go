@@ -64,6 +64,7 @@ func createPopulation(p []byte) (population []DNA) {
 
 // Build Mating Pool
 // TODO: Might be bugged, remember size of pool is > 100
+// TODO: NOTE that 0 DNA objects make it through into the pool -keep them out
 func generateMatingPool(p []byte) {
 	population := createPopulation(p)
 	for i := 0; i < len(population); i++ {
@@ -100,7 +101,31 @@ func generateMatingPool(p []byte) {
 	parent1 := matingPool[one]
 	parent2 := matingPool[two]
 
-	fmt.Println("PARENTS 1 & 2 : ", parent1, parent2)
+	//fmt.Println("PARENTS 1 & 2 : ", parent1, parent2)
+	child := crossover(parent1, parent2)
+	fmt.Println("Child DNA : ", child)
+}
+
+// crossover to generate the child DNA
+func crossover(p1 DNA, p2 DNA) (child DNA) {
+	fmt.Println(p1, p2)
+	// child
+
+	// get random midpoint
+	midpoint := rand.Intn(len(p1.Phrase))
+	fmt.Println("midpoint ", midpoint)
+
+	// perform crossover
+	for i := 0; i < len(p1.Phrase); i++ {
+		if i > midpoint {
+			child.Phrase[i] = p1.Phrase[i]
+
+		} else {
+			child.Phrase[i] = p2.Phrase[i]
+		}
+	}
+
+	return
 }
 
 func main() {
