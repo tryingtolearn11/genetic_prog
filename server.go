@@ -78,32 +78,33 @@ func generateMatingPool(p []byte, population []DNA, fit float64) []DNA {
 		one := rand.Intn(len(matingPool))
 		two := rand.Intn(len(matingPool))
 
-		//TODO: Make sure parents are NOT the same values
+		if one != two {
 
-		parent1 := matingPool[one]
-		parent2 := matingPool[two]
+			parent1 := matingPool[one]
+			parent2 := matingPool[two]
 
-		child := crossover(parent1, parent2)
-		child.mutate()
-		// just to measure the child's fitness
-		child.Fitness = measureFitness(p, child.Phrase)
-		newPool[i] = child
+			child := crossover(parent1, parent2)
+			child.mutate()
+			// just to measure the child's fitness
+			child.Fitness = measureFitness(p, child.Phrase)
+			newPool[i] = child
+		}
 	}
-	return newPool
 
+	return newPool
 }
 
 // crossover to generate the child DNA
 func crossover(p1 DNA, p2 DNA) (child DNA) {
-	// get random midpoint
-	midpoint := rand.Intn(len(p1.Phrase))
 
 	// initialize child phrase size
 	child.Phrase = make([]byte, len(p1.Phrase))
 
 	// perform crossover
 	for i := 0; i < len(p1.Phrase); i++ {
-		if i > midpoint {
+		// 50 % chance to come from either parent
+		chance := rand.Intn(100)
+		if chance > 50 {
 			child.Phrase[i] = p1.Phrase[i]
 
 		} else {
@@ -155,8 +156,8 @@ func main() {
 	for !match {
 
 		best := successor(population)
-		fmt.Printf("\r Generations : %d |  Successor Match : %2f", gen, best.Fitness)
-		fmt.Println(" | Phrase : ", string(best.Phrase))
+		fmt.Printf("\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
+		fmt.Println(" | Best Phrase : ", string(best.Phrase))
 		gen++
 
 		if bytes.Compare(best.Phrase, s) == 0 {
