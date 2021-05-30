@@ -24,8 +24,9 @@ func render(w http.ResponseWriter, filename string, data interface{}) {
 func input_handler(w http.ResponseWriter, r *http.Request) {
 
 	input := r.FormValue("Phrase")
+	io.WriteString(w, input)
+
 	//fmt.Fprintf(w, input, r.URL.Path[1:])
-	io.WriteString(w, string(input))
 	// run phrase func from pkg monkey
 	//	monkey.Run_phrase(s)
 	render(w, "form.html", nil)
