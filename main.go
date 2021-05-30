@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"github.com/tryingtolearn11/genetic_prog/"
+	"ga/vistwitch/monkey"
 )
 
-func run() {
+func main() {
 
-	fmt.Println("this works fine")
 	monkey.Run_phrase()
 
 }
