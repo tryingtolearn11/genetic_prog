@@ -1,4 +1,4 @@
-package main
+package monkey
 
 import (
 	"bufio"
@@ -138,7 +138,7 @@ func successor(population []DNA) DNA {
 	return population[position]
 }
 
-func main() {
+func Run_phrase() {
 	// for constant random numbers
 	rand.Seed(time.Now().UTC().UnixNano())
 	match := false
