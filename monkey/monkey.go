@@ -1,11 +1,11 @@
 package monkey
 
 import (
-	//	"bufio"
+	"bufio"
 	"bytes"
 	"fmt"
 	"math/rand"
-	//	"os"
+	"os"
 	"time"
 )
 
@@ -138,27 +138,24 @@ func successor(population []DNA) DNA {
 	return population[position]
 }
 
-func Run_phrase(s []byte) (o string) {
+func Run_phrase() {
 	// for constant random numbers
 	rand.Seed(time.Now().UTC().UnixNano())
 	match := false
 	gen := 0
 
-	/*
-		// take from stdin
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Println("Enter Phrase : ")
-		text, _ := reader.ReadString('\n')
-		m := []byte(text)
-		s := m[:len(m)-1]
-	*/
+	// take from stdin
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter Phrase : ")
+	text, _ := reader.ReadString('\n')
+	m := []byte(text)
+	s := m[:len(m)-1]
 
 	population := createPopulation(s)
-	var final_phrase []byte
 	for !match {
 
 		best := successor(population)
-		final_phrase = best.Phrase
+		//	final_phrase = best.Phrase
 		fmt.Printf("\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
 		fmt.Println(" | Best Phrase : ", string(best.Phrase))
 		gen++
@@ -171,5 +168,5 @@ func Run_phrase(s []byte) (o string) {
 
 		}
 	}
-	return string(final_phrase)
+
 }
