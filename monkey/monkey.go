@@ -55,6 +55,7 @@ func createPopulation(p []byte) (population []DNA) {
 }
 
 // Build Mating Pool
+// TODO : Bug when We enter a String of 1 Character
 func generateMatingPool(p []byte, population []DNA, fit float64) []DNA {
 
 	var matingPool []DNA
@@ -73,9 +74,12 @@ func generateMatingPool(p []byte, population []DNA, fit float64) []DNA {
 
 	for i := 0; i < len(population); i++ {
 
+		var one int
+		var two int
 		// parents selection : 2 parents to mimic human reproduction
-		one := rand.Intn(len(matingPool))
-		two := rand.Intn(len(matingPool))
+
+		one = rand.Intn(len(matingPool))
+		two = rand.Intn(len(matingPool))
 
 		if one != two {
 
@@ -88,6 +92,7 @@ func generateMatingPool(p []byte, population []DNA, fit float64) []DNA {
 			child.Fitness = measureFitness(p, child.Phrase)
 			newPool[i] = child
 		}
+
 	}
 
 	return newPool
@@ -156,8 +161,7 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 	for !match {
 
 		best := successor(population)
-		fmt.Fprintf(w, "\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
-		fmt.Fprintln(w, " | Best Phrase : ", string(best.Phrase))
+		fmt.Fprintln(w, "Total Generations :", gen, "|  Successor Match : ", best.Fitness, "Best Phrase :", string(best.Phrase))
 		gen++
 
 		if bytes.Compare(best.Phrase, s) == 0 {
