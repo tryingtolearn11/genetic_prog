@@ -3,6 +3,8 @@ package monkey
 import (
 	"bytes"
 	"fmt"
+	"html/template"
+	"io"
 	"math/rand"
 	"net/http"
 	"time"
@@ -161,7 +163,17 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 	for !match {
 
 		best := successor(population)
-		fmt.Fprintln(w, "Total Generations :", gen, "|  Successor Match : ", best.Fitness, "Best Phrase :", string(best.Phrase))
+		output := fmt.Sprintf("\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
+		fmt.Fprintf(w, "\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
+		io.WriteString(w, output)
+
+		t, err := template.New("foo").Parse(`{{define "T"}}Hello, {{.}}!{{end}}`)
+		if err != nil {
+			panic(err)
+		}
+
+		err = t.ExecuteTemplate(w, "T", "<script>alert('you have been tested`)</script>")
+
 		gen++
 
 		if bytes.Compare(best.Phrase, s) == 0 {
