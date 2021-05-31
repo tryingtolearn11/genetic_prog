@@ -1,15 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"ga/vistwitch/monkey"
-	/*
-		"html/template"
-		"io"
-		"log"
-		"net/http"
-	*/)
+	"log"
+	"net/http"
+)
 
 /*
+// render templates
 func render(w http.ResponseWriter, filename string, data interface{}) {
 	tmpl, err := template.ParseFiles(filename)
 	if err != nil {
@@ -24,24 +23,52 @@ func render(w http.ResponseWriter, filename string, data interface{}) {
 }
 
 func input_handler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		render(w, "form.html", nil)
 
-	input := r.FormValue("Phrase")
-	io.WriteString(w, input)
+	case "POST":
+		input := r.FormValue("Phrase")
 
-	//fmt.Fprintf(w, input, r.URL.Path[1:])
-	// run phrase func from pkg monkey
-	//	monkey.Run_phrase(s)
-	render(w, "form.html", nil)
+		fmt.Fprintf(w, "Phrase = %s\n", input)
+
+		// run phrase func from pkg monkey
+		//	monkey.Run_phrase(s)
+		render(w, "form.html", nil)
+	}
 
 }
+
 */
 
-func main() {
-	monkey.Run_phrase()
+func input_handler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "404 not found.", http.StatusNotFound)
+		return
+	}
 
-	/*
-		http.HandleFunc("/", input_handler)
-		log.Fatal(http.ListenAndServe(":5000", nil))
-	*/
+	switch r.Method {
+	case "GET":
+		http.ServeFile(w, r, "form.html")
+	case "POST":
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+
+		input := r.FormValue("Phrase")
+		fmt.Fprintf(w, "Phrase = %s\n", input)
+		s := []byte(input)
+		evolved_phrase := monkey.Run_phrase(w, r, s)
+		fmt.Fprintln(w, "Best Phrase = ", evolved_phrase)
+	default:
+		fmt.Fprintf(w, "sorry only GET and POST methods")
+	}
+}
+
+func main() {
+
+	http.HandleFunc("/", input_handler)
+	log.Fatal(http.ListenAndServe(":5000", nil))
 
 }
