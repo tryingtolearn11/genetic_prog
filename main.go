@@ -8,19 +8,6 @@ import (
 )
 
 /*
-// render templates
-func render(w http.ResponseWriter, filename string, data interface{}) {
-	tmpl, err := template.ParseFiles(filename)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
-	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Println(err)
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
-	}
-}
 
 func input_handler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
