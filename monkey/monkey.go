@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"io"
 	"math/rand"
 	"net/http"
 	"time"
@@ -13,6 +12,12 @@ import (
 type DNA struct {
 	Phrase  []byte
 	Fitness float64
+}
+
+type Output struct {
+	Ophrase           string
+	Best_match        string
+	Total_generations string
 }
 
 // create a DNA
@@ -163,19 +168,17 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 	for !match {
 
 		best := successor(population)
-		output := fmt.Sprintf("\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
-		fmt.Fprintf(w, "\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
-		io.WriteString(w, output)
-
-		t, err := template.New("foo").Parse(`{{define "T"}}Hello, {{.}}!{{end}}`)
+		gen++
+		// formatting output into template
+		match_rate := fmt.Sprintf("%f", best.Fitness)
+		data := Output{Ophrase: string(best.Phrase), Best_match: match_rate, Total_generations: fmt.Sprintf("%d", gen)}
+		t, err := template.ParseFiles("basictemplate.html")
+		t.Execute(w, data)
 		if err != nil {
 			panic(err)
 		}
 
-		err = t.ExecuteTemplate(w, "T", "<script>alert('you have been tested`)</script>")
-
-		gen++
-
+		// compare the two phrases to see exit condition
 		if bytes.Compare(best.Phrase, s) == 0 {
 			match = true
 		} else {
