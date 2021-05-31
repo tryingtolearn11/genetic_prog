@@ -137,7 +137,7 @@ func successor(population []DNA) DNA {
 	return population[position]
 }
 
-func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) (o string) {
+func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 	// for constant random numbers
 	rand.Seed(time.Now().UTC().UnixNano())
 	match := false
@@ -153,11 +153,9 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) (o string) {
 
 	population := createPopulation(s)
 
-	var final_phrase []byte
 	for !match {
 
 		best := successor(population)
-		final_phrase = best.Phrase
 		fmt.Fprintf(w, "\r Total Generations : %d |  Successor Match : %2f", gen, best.Fitness)
 		fmt.Fprintln(w, " | Best Phrase : ", string(best.Phrase))
 		gen++
@@ -170,6 +168,5 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) (o string) {
 
 		}
 	}
-	return string(final_phrase)
 
 }

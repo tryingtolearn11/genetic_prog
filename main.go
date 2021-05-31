@@ -7,27 +7,6 @@ import (
 	"net/http"
 )
 
-/*
-
-func input_handler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		render(w, "form.html", nil)
-
-	case "POST":
-		input := r.FormValue("Phrase")
-
-		fmt.Fprintf(w, "Phrase = %s\n", input)
-
-		// run phrase func from pkg monkey
-		//	monkey.Run_phrase(s)
-		render(w, "form.html", nil)
-	}
-
-}
-
-*/
-
 func input_handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
@@ -46,10 +25,9 @@ func input_handler(w http.ResponseWriter, r *http.Request) {
 		input := r.FormValue("Phrase")
 		fmt.Fprintf(w, "Phrase = %s\n", input)
 		s := []byte(input)
-		evolved_phrase := monkey.Run_phrase(w, r, s)
-		fmt.Fprintln(w, "Best Phrase = ", evolved_phrase)
+		monkey.Run_phrase(w, r, s)
 	default:
-		fmt.Fprintf(w, "sorry only GET and POST methods")
+		fmt.Fprintf(w, "Only GET and POST")
 	}
 }
 
