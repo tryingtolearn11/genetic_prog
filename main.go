@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// dont really need 'home' handler
 func home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/home" {
 		http.NotFound(w, r)
@@ -19,12 +20,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html"))
+var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
 
 var data monkey.Output
 
 func input_handler(w http.ResponseWriter, r *http.Request) {
-	if err := tmpl.ExecuteTemplate(w, "form.html", nil); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "home.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
