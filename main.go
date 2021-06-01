@@ -87,9 +87,8 @@ func main() {
 	mux.HandleFunc("/", input_monkey)
 	mux.HandleFunc("/picture", input_picture)
 	mux.HandleFunc("/upload", uploadFile)
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	fileServer := http.FileServer(http.Dir("./static/"))
-	mux.Handle("/static", http.StripPrefix("/static", fileServer))
 	log.Println("Starting Server on :5000")
 
 	err := http.ListenAndServe(":5000", mux)
