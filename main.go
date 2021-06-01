@@ -8,15 +8,23 @@ import (
 	"net/http"
 )
 
-var tmpl = template.Must(template.New("tmpl").ParseFiles("form.html"))
+func home(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/home" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Write([]byte("this will be home page :)"))
+}
+
+var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html"))
+
+var data monkey.Output
 
 func input_handler(w http.ResponseWriter, r *http.Request) {
-
 	if err := tmpl.ExecuteTemplate(w, "form.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	//switch r.Method {
-	//case "POST":
+
 	// Parse the Input String
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -36,7 +44,11 @@ func input_handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	http.HandleFunc("/", input_handler)
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", input_handler)
+	mux.HandleFunc("/home", home)
+	log.Println("Starting Server on :5000")
+	err := http.ListenAndServe(":5000", mux)
+	log.Fatal(err)
 
 }
