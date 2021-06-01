@@ -8,24 +8,20 @@ import (
 	"net/http"
 )
 
-// dont really need 'home' handler
-func home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/home" {
-		http.NotFound(w, r)
-		return
-	}
+// templates
+var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
+var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
 
-	if err := tmpl.ExecuteTemplate(w, "home.html", nil); err != nil {
+// part two
+func input_picture(w http.ResponseWriter, r *http.Request) {
+	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
-
-var data monkey.Output
-
-func input_handler(w http.ResponseWriter, r *http.Request) {
-	if err := tmpl.ExecuteTemplate(w, "home.html", nil); err != nil {
+// part one : Monkey
+func input_monkey(w http.ResponseWriter, r *http.Request) {
+	if err := monkey_tmpl.ExecuteTemplate(w, "home.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
@@ -49,9 +45,13 @@ func input_handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", input_handler)
-	mux.HandleFunc("/home", home)
+	mux.HandleFunc("/", input_monkey)
+	mux.HandleFunc("/picture", input_picture)
+
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static", http.StripPrefix("/static", fileServer))
 	log.Println("Starting Server on :5000")
+
 	err := http.ListenAndServe(":5000", mux)
 	log.Fatal(err)
 
