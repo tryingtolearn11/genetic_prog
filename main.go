@@ -13,10 +13,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("this will be home page :)"))
+
+	if err := tmpl.ExecuteTemplate(w, "home.html", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html"))
+var tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html"))
 
 var data monkey.Output
 
