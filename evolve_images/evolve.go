@@ -12,8 +12,8 @@ import (
 )
 
 // constants
-var number_of_circles = 120
-var circleSize = 10
+var number_of_circles = 130
+var circleSize = 15
 
 // Consider : Maybe try using semi transparent colors
 type Circle struct {
@@ -65,7 +65,7 @@ func saveImg(filePath string, rgba *image.RGBA) {
 	img, err := os.Create(filePath)
 	defer img.Close()
 	if err != nil {
-		fmt.Println("Err creating File")
+		fmt.Println("Err creating File", err)
 	}
 	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
@@ -115,6 +115,6 @@ func main() {
 
 	img := loadImg("./test_imgs/clown.png")
 	test_img := generateEntity(img)
-	saveImg("/evolved_clown.png", test_img.DNA)
+	saveImg("../static/pictures/"+"clown2.png", test_img.DNA)
 
 }
