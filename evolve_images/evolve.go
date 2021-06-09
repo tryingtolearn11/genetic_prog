@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/fogleman/gg"
 	"image"
-	//"image/color"
-	//	"image/png"
-	"math"
+	"image/color"
 	"math/rand"
 	"os"
 	"time"
+
+	"github.com/fogleman/gg"
 )
 
 /*
@@ -26,12 +25,14 @@ type Circle struct {
 }
 
 
-// Need to define an entity
-// will be composed of a slice of circles
-type Entity struct {
-	Circles []Circle
-	Fitness float64
-	DNA     *image.RGBA
+// returns an array of Points
+func Polygon(number_of_sides int) []Point {
+	result := make([]Point, number_of_sides)
+	for i := 0; i < number_of_sides; i++ {
+		a := float64(i)*2*math.Pi/float64(number_of_sides) - math.Pi/2
+		result[i] = Point{math.Cos(a), math.Sin(a)}
+	}
+	return result
 }
 
 func display(width int, height int, circle_array []Circle) (i *image.RGBA) {
@@ -109,39 +110,56 @@ type Point struct {
 	Y float64
 }
 
-// returns an array of Points
-func Polygon(number_of_sides int) []Point {
-	result := make([]Point, number_of_sides)
-	for i := 0; i < number_of_sides; i++ {
-		a := float64(i)*2*math.Pi/float64(number_of_sides) - math.Pi/2
-		result[i] = Point{math.Cos(a), math.Sin(a)}
+// Need to define an entity
+// will be composed of a slice of circles
+type Entity struct {
+	Polygons []Polygon
+	Fitness  float64
+	DNA      *image.RGBA
+}
+
+type Polygon struct {
+	Number_of_sides int
+	Width           float64
+	Height          float64
+	Radius          float64
+	Color           []float64
+}
+
+func generatePolygon(n int, width float64, height float64, radius float64) (polygon Polygon) {
+	r := float64(rand.Intn(255))
+	g := float64(rand.Intn(255))
+	b := float64(rand.Intn(255))
+	//a := float64(rand.Intn(255))
+	polygon = Polygon{
+		Number_of_sides: n,
+		Width:           width,
+		Height:          height,
+		Radius:          radius,
+		Color:           []float64{r, g, b, 0.5},
 	}
-	return result
+	return
 }
 
 func display(width int, height int) {
 	const S = 50
 	const W = 500
 	const H = 500
+	const number_of_polygons = 120
 	//end := image.NewRGBA(image.Rect(0, 0, width, height))
 	dc := gg.NewContext(width, height)
-	for k := 0; k < 15; k++ {
+	for k := 0; k < number_of_polygons; k++ {
 		//sidesNum := rand.Intn((5 - 3) + 3)
 		x_pos := float64(rand.Intn(W))
 		y_pos := float64(rand.Intn(H))
 		radius := float64(rand.Intn(100))
 		rotation := float64(rand.Intn(360))
 
-		r := float64(rand.Intn(255))
-		g := float64(rand.Intn(255))
-		b := float64(rand.Intn(255))
-		//a := float64(rand.Intn(255))
-
 		dc.DrawRegularPolygon(3, x_pos, y_pos, radius, rotation)
 		dc.Push()
+		dc.SetRGBA(r, g, b, 0.5)
 		dc.SetLineWidth(1)
 		//dc.SetHexColor("#FFCC00")
-		dc.SetRGBA(r, g, b, 0.5)
 		dc.StrokePreserve()
 		//dc.SetHexColor("#FFE43A")
 		dc.Fill()
