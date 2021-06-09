@@ -138,10 +138,8 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 	for k := 0; k < number_of_polygons; k++ {
 		width := rand.Intn(i.Rect.Dx())
 		height := rand.Intn(i.Rect.Dy())
-		//x_pos := float64(rand.Intn(W))
-		//y_pos := float64(rand.Intn(H))
 		r := float64(rand.Intn(100))
-		sidesNum := rand.Intn((5 - 3) + 3)
+		sidesNum := rand.Intn(6-3) + 3
 		polygon_array[k] = generatePolygon(sidesNum, float64(width), float64(height), r)
 
 	}
@@ -165,15 +163,12 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 		dc.Push()
 		dc.SetRGBA(poly.Color[0], poly.Color[1], poly.Color[2], poly.Color[3])
 		dc.SetLineWidth(1)
-		//dc.SetHexColor("#FFCC00")
 		dc.StrokePreserve()
-		//dc.SetHexColor("#FFE43A")
 		dc.Fill()
 		dc.Pop()
 
 	}
 
-	//dc.SavePNG("../static/pictures/" + "output.png")
 	return end
 }
 
@@ -183,5 +178,4 @@ func main() {
 	img := loadImg("./test_imgs/clown.png")
 	test_img := generateEntity(img)
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
-	//display(img.Rect.Dx(), img.Rect.Dy(),
 }
