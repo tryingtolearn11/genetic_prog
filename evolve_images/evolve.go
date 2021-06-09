@@ -125,17 +125,25 @@ func display(width int, height int) {
 	const H = 500
 	//end := image.NewRGBA(image.Rect(0, 0, width, height))
 	dc := gg.NewContext(width, height)
-	for k := 0; k < 10; k++ {
+	for k := 0; k < 15; k++ {
+		//sidesNum := rand.Intn((5 - 3) + 3)
 		x_pos := float64(rand.Intn(W))
 		y_pos := float64(rand.Intn(H))
 		radius := float64(rand.Intn(100))
 		rotation := float64(rand.Intn(360))
+
+		r := float64(rand.Intn(255))
+		g := float64(rand.Intn(255))
+		b := float64(rand.Intn(255))
+		//a := float64(rand.Intn(255))
+
 		dc.DrawRegularPolygon(3, x_pos, y_pos, radius, rotation)
 		dc.Push()
-		dc.SetLineWidth(10)
-		dc.SetHexColor("#FFCC00")
+		dc.SetLineWidth(1)
+		//dc.SetHexColor("#FFCC00")
+		dc.SetRGBA(r, g, b, 0.5)
 		dc.StrokePreserve()
-		dc.SetHexColor("#FFE43A")
+		//dc.SetHexColor("#FFE43A")
 		dc.Fill()
 		dc.Pop()
 
