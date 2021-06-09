@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
+	//	"image/color"
+	"image/png"
 	"math/rand"
 	"os"
 	"time"
@@ -41,15 +42,6 @@ func display(width int, height int, circle_array []Circle) (i *image.RGBA) {
 
 	return end
 }
-// where to save generated image
-func saveImg(filePath string, rgba *image.RGBA) {
-	img, err := os.Create(filePath)
-	defer img.Close()
-	if err != nil {
-		fmt.Println("Err creating File", err)
-	}
-	png.Encode(img, rgba.SubImage(rgba.Rect))
-}
 
 
 // going to pass randomized values for x, y and r here
@@ -68,27 +60,18 @@ func generateRandomizedCircle(width int, height int, radius int) (circle Circle)
 	return
 }
 
-// Now to create the entity
-func generateEntity(i *image.RGBA) (entity Entity) {
-	circle_array := make([]Circle, number_of_circles)
-
-	for k := 0; k < number_of_circles; k++ {
-		width := rand.Intn(i.Rect.Dx())
-		height := rand.Intn(i.Rect.Dy())
-		r := rand.Intn(circleSize)
-		circle_array[k] = generateRandomizedCircle(width, height, r)
-	}
-
-	entity = Entity{
-		Circles: circle_array,
-		Fitness: 0,
-		DNA:     display(i.Rect.Dx(), i.Rect.Dy(), circle_array),
-	}
-
-	return
-}
 */
 // TODO : try to create an entity image and render it to webpage
+
+// where to save generated image
+func saveImg(filePath string, rgba *image.RGBA) {
+	img, err := os.Create(filePath)
+	defer img.Close()
+	if err != nil {
+		fmt.Println("Err creating File", err)
+	}
+	png.Encode(img, rgba.SubImage(rgba.Rect))
+}
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -104,6 +87,12 @@ func loadImg(filePath string) *image.RGBA {
 	}
 	return pic.(*image.RGBA)
 }
+
+var number_of_polygons = 120
+
+const S = 50
+const W = 500
+const H = 500
 
 type Point struct {
 	X float64
@@ -141,23 +130,40 @@ func generatePolygon(n int, width float64, height float64, radius float64) (poly
 	return
 }
 
-func display(width int, height int) {
-	const S = 50
-	const W = 500
-	const H = 500
-	const number_of_polygons = 120
-	//end := image.NewRGBA(image.Rect(0, 0, width, height))
-	dc := gg.NewContext(width, height)
-	for k := 0; k < number_of_polygons; k++ {
-		//sidesNum := rand.Intn((5 - 3) + 3)
-		x_pos := float64(rand.Intn(W))
-		y_pos := float64(rand.Intn(H))
-		radius := float64(rand.Intn(100))
-		rotation := float64(rand.Intn(360))
+// Now to create the entity
+// An Entity is composed of an array of Polygons
+func generateEntity(i *image.RGBA) (entity Entity) {
+	polygon_array := make([]Polygon, number_of_polygons)
 
-		dc.DrawRegularPolygon(3, x_pos, y_pos, radius, rotation)
+	for k := 0; k < number_of_polygons; k++ {
+		width := rand.Intn(i.Rect.Dx())
+		height := rand.Intn(i.Rect.Dy())
+		//x_pos := float64(rand.Intn(W))
+		//y_pos := float64(rand.Intn(H))
+		r := float64(rand.Intn(100))
+		sidesNum := rand.Intn((5 - 3) + 3)
+		polygon_array[k] = generatePolygon(sidesNum, float64(width), float64(height), r)
+
+	}
+
+	entity = Entity{
+		Polygons: polygon_array,
+		Fitness:  0,
+		DNA:      display(i.Rect.Dx(), i.Rect.Dy(), polygon_array),
+	}
+
+	return
+}
+
+func display(width int, height int, pa []Polygon) *image.RGBA {
+	//const number_of_polygons = 120
+	end := image.NewRGBA(image.Rect(0, 0, width, height))
+	dc := gg.NewContextForRGBA(end)
+	for _, poly := range pa {
+		rotation := float64(rand.Intn(360))
+		dc.DrawRegularPolygon(poly.Number_of_sides, poly.Width, poly.Height, poly.Radius, rotation)
 		dc.Push()
-		dc.SetRGBA(r, g, b, 0.5)
+		dc.SetRGBA(poly.Color[0], poly.Color[1], poly.Color[2], poly.Color[3])
 		dc.SetLineWidth(1)
 		//dc.SetHexColor("#FFCC00")
 		dc.StrokePreserve()
@@ -167,14 +173,15 @@ func display(width int, height int) {
 
 	}
 
-	dc.SavePNG("../static/pictures/" + "output.png")
+	//dc.SavePNG("../static/pictures/" + "output.png")
+	return end
 }
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("this is a test :D ")
 	img := loadImg("./test_imgs/clown.png")
-	display(img.Rect.Dx(), img.Rect.Dy())
-	//test_img := generateEntity(img)
-	//saveImg("../static/pictures/"+"result.png", result)
+	test_img := generateEntity(img)
+	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
+	//display(img.Rect.Dx(), img.Rect.Dy(),
 }
