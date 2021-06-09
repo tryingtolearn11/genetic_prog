@@ -5,7 +5,7 @@ import (
 	"github.com/fogleman/gg"
 	"image"
 	//"image/color"
-	"image/png"
+	//	"image/png"
 	"math"
 	"math/rand"
 	"os"
@@ -39,6 +39,15 @@ func display(width int, height int, circle_array []Circle) (i *image.RGBA) {
 	dc := gg.NewContext(width, height)
 
 	return end
+}
+// where to save generated image
+func saveImg(filePath string, rgba *image.RGBA) {
+	img, err := os.Create(filePath)
+	defer img.Close()
+	if err != nil {
+		fmt.Println("Err creating File", err)
+	}
+	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
 
 
@@ -95,49 +104,34 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-// where to save generated image
-func saveImg(filePath string, rgba *image.RGBA) {
-	img, err := os.Create(filePath)
-	defer img.Close()
-	if err != nil {
-		fmt.Println("Err creating File", err)
-	}
-	png.Encode(img, rgba.SubImage(rgba.Rect))
-}
-
 type Point struct {
 	X float64
 	Y float64
 }
 
-func Polygon(n int) []Point {
-	result := make([]Point, n)
-	for i := 0; i < n; i++ {
-		a := float64(i)*2*math.Pi/float64(n) - math.Pi/2
+// returns an array of Points
+func Polygon(number_of_sides int) []Point {
+	result := make([]Point, number_of_sides)
+	for i := 0; i < number_of_sides; i++ {
+		a := float64(i)*2*math.Pi/float64(number_of_sides) - math.Pi/2
 		result[i] = Point{math.Cos(a), math.Sin(a)}
 	}
 	return result
 }
 
-func display(width int, height int) (i *image.RGBA) {
-	const S = 100
-	const W = 1200
-	const H = 120
-	end := image.NewRGBA(image.Rect(0, 0, width, height))
+func display(width int, height int) {
+	const S = 50
+	const W = 500
+	const H = 500
+	//end := image.NewRGBA(image.Rect(0, 0, width, height))
 	dc := gg.NewContext(width, height)
-	n := 5
-	points := Polygon(n)
-	for x := S / 2; x < W; x += S {
+	for k := 0; k < 10; k++ {
+		x_pos := float64(rand.Intn(W))
+		y_pos := float64(rand.Intn(H))
+		radius := float64(rand.Intn(100))
+		rotation := float64(rand.Intn(360))
+		dc.DrawRegularPolygon(3, x_pos, y_pos, radius, rotation)
 		dc.Push()
-		s := rand.Float64()*S/4 + S/4
-		dc.Translate(float64(x), H/2)
-		dc.Rotate(rand.Float64() * 2 * math.Pi)
-		dc.Scale(s, s)
-		for i := 0; i < n+1; i++ {
-			index := (i * 2) % n
-			p := points[index]
-			dc.LineTo(p.X, p.Y)
-		}
 		dc.SetLineWidth(10)
 		dc.SetHexColor("#FFCC00")
 		dc.StrokePreserve()
@@ -146,15 +140,15 @@ func display(width int, height int) (i *image.RGBA) {
 		dc.Pop()
 
 	}
-	dc.SavePNG("out.png")
-	return end
+
+	dc.SavePNG("../static/pictures/" + "output.png")
 }
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("this is a test :D ")
 	img := loadImg("./test_imgs/clown.png")
-	result := display(img.Rect.Dx(), img.Rect.Dy())
+	display(img.Rect.Dx(), img.Rect.Dy())
 	//test_img := generateEntity(img)
-	saveImg("../static/pictures/"+"result.png", result)
+	//saveImg("../static/pictures/"+"result.png", result)
 }
