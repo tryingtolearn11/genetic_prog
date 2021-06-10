@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/fogleman/gg"
 	"image"
-	//	"image/color"
 	"image/png"
+	"math"
 	"math/rand"
 	"os"
 	"time"
-
-	"github.com/fogleman/gg"
 )
 
 /*
@@ -88,11 +87,11 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 120
+var number_of_polygons = 60
 
 const S = 50
-const W = 500
-const H = 500
+const W = 250
+const H = 281
 
 type Point struct {
 	X float64
@@ -144,10 +143,11 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 
 	}
 
+	entity_image := display(i.Rect.Dx(), i.Rect.Dy(), polygon_array)
 	entity = Entity{
 		Polygons: polygon_array,
-		Fitness:  0,
-		DNA:      display(i.Rect.Dx(), i.Rect.Dy(), polygon_array),
+		Fitness:  calculateFitness(i, entity_image),
+		DNA:      entity_image,
 	}
 
 	return
@@ -172,10 +172,29 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 	return end
 }
 
+// 2 images are different = fitness of len(a.Pix),
+// 2 images are same = fitness of 0
+func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
+	fmt.Println("Len(a.Pix) : ", len(a.Pix))
+	// go thru the pixels and find the difference
+	for x := 0; x < len(a.Pix); x++ {
+		//pixel_fitness := float64(math.Pow(float64(a.Pix[x]-b.Pix[x]), 2))
+		pixel_fitness := uint64(a.Pix[x]) - uint64(b.Pix[x])
+		squared_fit := pixel_fitness * pixel_fitness
+		fitness = math.Sqrt(float64(squared_fit))
+	}
+	return fitness
+}
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	fmt.Println("this is a test :D ")
-	img := loadImg("./test_imgs/clown.png")
+	fmt.Println("Running evolve_pictures")
+	img := loadImg("./test_imgs/resized_clown.png")
 	test_img := generateEntity(img)
+	calculateFitness(img, test_img.DNA)
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
+
+	// print tests
+	fmt.Println("ENTITY's FITNESS IS : ", test_img.Fitness)
+
 }
