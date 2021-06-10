@@ -173,14 +173,16 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 // 2 images are different = fitness of len(a.Pix),
 // 2 images are same = fitness of 0
 func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
-	fmt.Println("Len(a.Pix) : ", len(a.Pix))
+	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
+	var p float64
 	for x := 0; x < len(a.Pix); x++ {
-		pixel_fitness := float64(math.Pow(float64(a.Pix[x]-b.Pix[x]), 2))
-		//pixel_fitness := uint64(a.Pix[x]) - uint64(b.Pix[x])
-		//squared_fit := pixel_fitness * pixel_fitness
-		fitness = math.Sqrt(float64(pixel_fitness))
+		p += math.Pow(float64(a.Pix[x])-float64(b.Pix[x]), 2)
 	}
+
+	fitness = math.Sqrt(p)
+
+	fmt.Println("FITNESS :", fitness)
 	return fitness
 }
 
@@ -200,13 +202,13 @@ func main() {
 
 	test_img := generateEntity(img)
 
-	//	population := generatePopulation(test_img.DNA)
+	population := generatePopulation(test_img.DNA)
 
-	calculateFitness(img, test_img.DNA)
+	//calculateFitness(img, test_img.DNA)
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 
 	// print tests
 	//fmt.Println("ENTITY's FITNESS : ", test_img.Fitness)
-	//fmt.Println("population : ", len(population))
+	fmt.Println("population : ", len(population))
 
 }
