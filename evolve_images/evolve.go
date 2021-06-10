@@ -39,7 +39,7 @@ func loadImg(filePath string) *image.RGBA {
 
 var number_of_polygons = 50
 var mutationRate = 0.01
-var PopulationSize = 100
+var PopulationSize = 150
 
 const S = 50
 const W = 250
@@ -204,27 +204,25 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 	return next_gen
 }
 
+//TODO : BUG was here. Reminder to review
 func crossover(parentA Entity, parentB Entity) (child Entity) {
-	pix := make([]uint8, len(parentA.DNA.Pix))
 	child = Entity{
-		DNA: &image.RGBA{
-			Pix:    pix,
-			Stride: parentA.DNA.Stride,
-			Rect:   parentA.DNA.Rect,
-		},
-		Fitness: 0,
+		Polygons: make([]Polygon, len(parentA.Polygons)),
+		Fitness:  0,
 	}
 
-	mid := rand.Intn(len(parentA.DNA.Pix))
-	for j := 0; j < len(parentA.DNA.Pix); j++ {
+	mid := rand.Intn(len(parentA.Polygons))
+	for j := 0; j < len(parentA.Polygons); j++ {
 		if j > mid {
-			child.DNA.Pix[j] = parentA.DNA.Pix[j]
+			child.Polygons[j] = parentA.Polygons[j]
 		} else {
-			child.DNA.Pix[j] = parentB.DNA.Pix[j]
+			child.Polygons[j] = parentB.Polygons[j]
 		}
 	}
 
-	return
+	child.DNA = display(parentA.DNA.Rect.Dx(), parentA.DNA.Rect.Dy(), child.Polygons)
+
+	return child
 }
 
 func (e *Entity) mutation() {
@@ -270,7 +268,7 @@ func main() {
 			pool := generateMatingPool(population)
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
-			if generation%100 == 0 {
+			if generation%20 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 			}
