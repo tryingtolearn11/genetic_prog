@@ -85,7 +85,7 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 60
+var number_of_polygons = 50
 
 const S = 50
 const W = 250
@@ -176,23 +176,37 @@ func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
 	fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
 	for x := 0; x < len(a.Pix); x++ {
-		//pixel_fitness := float64(math.Pow(float64(a.Pix[x]-b.Pix[x]), 2))
-		pixel_fitness := uint64(a.Pix[x]) - uint64(b.Pix[x])
-		squared_fit := pixel_fitness * pixel_fitness
-		fitness = math.Sqrt(float64(squared_fit))
+		pixel_fitness := float64(math.Pow(float64(a.Pix[x]-b.Pix[x]), 2))
+		//pixel_fitness := uint64(a.Pix[x]) - uint64(b.Pix[x])
+		//squared_fit := pixel_fitness * pixel_fitness
+		fitness = math.Sqrt(float64(pixel_fitness))
 	}
 	return fitness
+}
+
+// Create a Population of 100 Entitys
+func generatePopulation(i *image.RGBA) (population []Entity) {
+	for k := 0; k < 100; k++ {
+		organism := generateEntity(i)
+		population = append(population, organism)
+	}
+	return population
 }
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("Running evolve_pictures")
 	img := loadImg("./test_imgs/resized_clown.png")
+
 	test_img := generateEntity(img)
+
+	//	population := generatePopulation(test_img.DNA)
+
 	calculateFitness(img, test_img.DNA)
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 
 	// print tests
-	fmt.Println("ENTITY's FITNESS IS : ", test_img.Fitness)
+	//fmt.Println("ENTITY's FITNESS : ", test_img.Fitness)
+	//fmt.Println("population : ", len(population))
 
 }
