@@ -87,6 +87,7 @@ func loadImg(filePath string) *image.RGBA {
 }
 
 var number_of_polygons = 50
+var mutationRate = 0.01
 
 const S = 50
 const W = 250
@@ -210,9 +211,7 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	best_fitness := population[0].Fitness
 	worst_fitness := population[(len(population) - 1)].Fitness
 
-	fmt.Println("Best Fitness , Worst Fitness  : ", best_fitness, "  ", worst_fitness)
 	difference := ((math.Abs(best_fitness - worst_fitness)) / 281000) * 100
-	fmt.Println("Difference : ", difference)
 
 	poolSize := int(difference)
 	if poolSize >= len(population) {
@@ -225,12 +224,14 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	}
 
 	/*
-		for i := 0; i < len(pool); i++ {
-			fmt.Println(pool[i].Fitness)
-		}
-	*/
 
-	fmt.Println("Mating Pool : ", len(pool))
+		fmt.Println("Best Fitness , Worst Fitness  : ", best_fitness, "  ", worst_fitness)
+		fmt.Println("Difference : ", difference)
+		fmt.Println("Mating Pool : ", len(pool))
+			for i := 0; i < len(pool); i++ {
+				fmt.Println(pool[i].Fitness)
+			}
+	*/
 
 	return
 }
@@ -258,6 +259,7 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 		*/
 
 		child := crossover(pool[one], pool[two])
+		child.mutation()
 		child.Fitness = calculateFitness(t, child.DNA)
 
 		next_gen[i] = child
@@ -288,27 +290,62 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 	return
 }
 
+func (e *Entity) mutation() {
+	for j := 0; j < len(e.DNA.Pix); j++ {
+		chance := rand.Float64()
+		if chance <= mutationRate {
+			e.DNA.Pix[j] = uint8(rand.Intn(255))
+		}
+	}
+}
+
+func successor(p []Entity) (e Entity) {
+	model := float64(0)
+	position := 0
+	for i := 0; i < len(p); i++ {
+		if p[i].Fitness > model {
+			position = i
+			model = p[i].Fitness
+		}
+	}
+	return p[position]
+}
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("Running evolve_pictures")
+	match := false
 	img := loadImg("./test_imgs/resized_clown.png")
-
 	test_img := generateEntity(img)
-
 	population := generatePopulation(test_img.DNA)
+	generation := 0
 
-	//calculateFitness(img, test_img.DNA)
-	matingPool := generateMatingPool(population)
-	nextGeneration := generateNextGeneration(matingPool, population, img)
+	for !match {
+		generation++
+		best := successor(population)
+		fmt.Println("GENERATION : ", generation)
 
-	for i := 0; i < len(nextGeneration); i++ {
-		fmt.Println(nextGeneration[i].Fitness)
+		if best.Fitness < 8000 {
+			match = true
+		} else {
+			pool := generateMatingPool(population)
+			population = generateNextGeneration(pool, population, img)
+			if generation%10 == 0 {
+				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
+			}
+		}
 	}
 
-	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
+	/*
+
+		fmt.Println("population : ", len(population))
+			for i := 0; i < len(nextGeneration); i++ {
+				fmt.Println(nextGeneration[i].Fitness)
+				//fmt.Println(len(nextGeneration[i].DNA.Pix))
+			}
+	*/
 
 	// print tests
 	//fmt.Println("ENTITY's FITNESS : ", test_img.Fitness)
-	fmt.Println("population : ", len(population))
 
 }
