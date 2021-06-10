@@ -12,55 +12,6 @@ import (
 	"time"
 )
 
-/*
-// constants
-var number_of_circles = 130
-var circleSize = 15
-
-// Consider : Maybe try using semi transparent colors
-type Circle struct {
-	X      int
-	Y      int
-	Radius int
-	Color  color.Color
-}
-
-
-// returns an array of Points
-func Polygon(number_of_sides int) []Point {
-	result := make([]Point, number_of_sides)
-	for i := 0; i < number_of_sides; i++ {
-		a := float64(i)*2*math.Pi/float64(number_of_sides) - math.Pi/2
-		result[i] = Point{math.Cos(a), math.Sin(a)}
-	}
-	return result
-}
-
-func display(width int, height int, circle_array []Circle) (i *image.RGBA) {
-	end := image.NewRGBA(image.Rect(0, 0, width, height))
-	dc := gg.NewContext(width, height)
-
-	return end
-}
-
-
-// going to pass randomized values for x, y and r here
-func generateRandomizedCircle(width int, height int, radius int) (circle Circle) {
-	r := uint8(rand.Intn(255))
-	g := uint8(rand.Intn(255))
-	b := uint8(rand.Intn(255))
-	a := uint8(rand.Intn(255))
-	circle = Circle{
-		X:      width,
-		Y:      height,
-		Radius: radius,
-		Color:  color.RGBA{r, g, b, a},
-	}
-	return
-}
-
-*/
-
 // where to save generated image
 func saveImg(filePath string, rgba *image.RGBA) {
 	img, err := os.Create(filePath)
@@ -88,6 +39,7 @@ func loadImg(filePath string) *image.RGBA {
 
 var number_of_polygons = 50
 var mutationRate = 0.021
+var PopulationSize = 150
 
 const S = 50
 const W = 250
@@ -190,49 +142,32 @@ func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
 
 // Create a Population of 100 Entitys
 func generatePopulation(i *image.RGBA) (population []Entity) {
-	for k := 0; k < 100; k++ {
+	for k := 0; k < PopulationSize; k++ {
 		organism := generateEntity(i)
 		population = append(population, organism)
 	}
 	return population
 }
 
-// Create the mating pool
-// sort the population by their fitness and find the difference between the
-// best and the worst entity. The difference will the size of the pool and we
-// will take the 'difference' amount of entites starting from the top going
-// down
 // TODO: Review This Function - The fitness keeps increasing
 func generateMatingPool(population []Entity) (pool []Entity) {
 	// sort the population by fitness (the lower the fitness the better)
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-
-	best_fitness := population[0].Fitness
-	worst_fitness := population[(len(population) - 1)].Fitness
-
-	difference := ((math.Abs(best_fitness - worst_fitness)) / 281000) * 100
-
-	poolSize := int(difference)
-	if poolSize >= len(population) {
-		poolSize = 100
+	Poolsize := 20
+	top := population[0 : Poolsize+1]
+	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
+		pool = population
+		return
 	}
 
-	// lets try a pool of top 30 + the difference amount as the extra organisms
-	for j := 0; j < poolSize+10; j++ {
-		pool = append(pool, population[j])
+	for i := 0; i < len(top)-1; i++ {
+		num := int((top[Poolsize].Fitness - top[i].Fitness))
+		for n := 0; n < num; n++ {
+			pool = append(pool, top[i])
+		}
 	}
-
-	/*
-
-		fmt.Println("Best Fitness , Worst Fitness  : ", best_fitness, "  ", worst_fitness)
-		fmt.Println("Difference : ", difference)
-		fmt.Println("Mating Pool : ", len(pool))
-			for i := 0; i < len(pool); i++ {
-				fmt.Println(pool[i].Fitness)
-			}
-	*/
 
 	return
 }
@@ -340,17 +275,5 @@ func main() {
 			}
 		}
 	}
-
-	/*
-
-		fmt.Println("population : ", len(population))
-			for i := 0; i < len(nextGeneration); i++ {
-				fmt.Println(nextGeneration[i].Fitness)
-				//fmt.Println(len(nextGeneration[i].DNA.Pix))
-			}
-	*/
-
-	// print tests
-	//fmt.Println("ENTITY's FITNESS : ", test_img.Fitness)
 
 }
