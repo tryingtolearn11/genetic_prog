@@ -219,7 +219,7 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	}
 
 	// lets try a pool of top 30 + the difference amount as the extra organisms
-	for j := 0; j < poolSize+30; j++ {
+	for j := 0; j < poolSize+40; j++ {
 		pool = append(pool, population[j])
 	}
 
@@ -313,6 +313,7 @@ func successor(p []Entity) (e Entity) {
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
+	start := time.Now()
 	fmt.Println("Running evolve_pictures")
 	match := false
 	img := loadImg("./test_imgs/resized_clown.png")
@@ -323,14 +324,15 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
-		fmt.Println("GENERATION : ", generation)
 
 		if best.Fitness < 8000 {
 			match = true
 		} else {
 			pool := generateMatingPool(population)
 			population = generateNextGeneration(pool, population, img)
+			time_taken := time.Since(start)
 			if generation%10 == 0 {
+				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 			}
 		}
