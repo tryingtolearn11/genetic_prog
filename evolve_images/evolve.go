@@ -40,6 +40,7 @@ func loadImg(filePath string) *image.RGBA {
 var number_of_polygons = 50
 var mutationRate = 0.01
 var PopulationSize = 150
+var sidesNum = rand.Intn(6-3) + 3
 
 const S = 50
 const W = 250
@@ -90,7 +91,6 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 		width := rand.Intn(i.Rect.Dx())
 		height := rand.Intn(i.Rect.Dy())
 		r := float64(rand.Intn(100))
-		sidesNum := rand.Intn(6-3) + 3
 		polygon_array[k] = generatePolygon(sidesNum, float64(width), float64(height), r)
 
 	}
@@ -226,10 +226,11 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 }
 
 func (e *Entity) mutation() {
-	for j := 0; j < len(e.DNA.Pix); j++ {
+	for j := 0; j < len(e.Polygons); j++ {
 		chance := rand.Float64()
 		if chance < mutationRate {
-			e.DNA.Pix[j] = uint8(rand.Intn(255))
+			r := float64(rand.Intn(100))
+			e.Polygons[j] = generatePolygon(sidesNum, float64(e.DNA.Rect.Dx()), float64(e.DNA.Rect.Dy()), r)
 		}
 	}
 }
