@@ -233,6 +233,7 @@ func (e *Entity) mutation() {
 			e.Polygons[j] = generatePolygon(sidesNum, float64(e.DNA.Rect.Dx()), float64(e.DNA.Rect.Dy()), r)
 		}
 	}
+	e.DNA = display(e.DNA.Rect.Dx(), e.DNA.Rect.Dy(), e.Polygons)
 }
 
 func successor(p []Entity) (e Entity) {
