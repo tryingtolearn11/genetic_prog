@@ -8,6 +8,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -182,7 +183,7 @@ func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
 
 	fitness = math.Sqrt(p)
 
-	fmt.Println("FITNESS :", fitness)
+	//	fmt.Println("FITNESS :", fitness)
 	return fitness
 }
 
@@ -195,6 +196,40 @@ func generatePopulation(i *image.RGBA) (population []Entity) {
 	return population
 }
 
+// Create the mating pool
+// sort the population by their fitness and find the difference between the
+// best and the worst entity. The difference will the size of the pool and we
+// will take the 'difference' amount of entites starting from the top going
+// down
+func generateMatingPool(population []Entity) (pool []Entity) {
+	// sort the population by fitness (the lower the fitness the better)
+	sort.SliceStable(population, func(i, j int) bool {
+		return population[i].Fitness < population[j].Fitness
+	})
+
+	best_fitness := population[0].Fitness
+	worst_fitness := population[(len(population) - 1)].Fitness
+
+	fmt.Println("Best Fitness , Worst Fitness  : ", best_fitness, "  ", worst_fitness)
+	difference := ((math.Abs(best_fitness - worst_fitness)) / 281000) * 100
+	fmt.Println("Difference : ", difference)
+
+	poolSize := int(difference)
+
+	// lets try a pool of top 20 + the difference amount as the extra organisms
+	for j := 0; j < poolSize+20; j++ {
+		pool = append(pool, population[j])
+	}
+
+	for i := 0; i < len(pool); i++ {
+		fmt.Println(pool[i].Fitness)
+	}
+
+	fmt.Println("Mating Pool : ", len(pool))
+
+	return
+}
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	fmt.Println("Running evolve_pictures")
@@ -205,6 +240,7 @@ func main() {
 	population := generatePopulation(test_img.DNA)
 
 	//calculateFitness(img, test_img.DNA)
+	generateMatingPool(population)
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 
 	// print tests
