@@ -45,7 +45,6 @@ func display(width int, height int, circle_array []Circle) (i *image.RGBA) {
 
 // going to pass randomized values for x, y and r here
 func generateRandomizedCircle(width int, height int, radius int) (circle Circle) {
-	// TODO: try to aim for semi-transparent
 	r := uint8(rand.Intn(255))
 	g := uint8(rand.Intn(255))
 	b := uint8(rand.Intn(255))
@@ -60,7 +59,6 @@ func generateRandomizedCircle(width int, height int, radius int) (circle Circle)
 }
 
 */
-// TODO : try to create an entity image and render it to webpage
 
 // where to save generated image
 func saveImg(filePath string, rgba *image.RGBA) {
@@ -98,20 +96,20 @@ type Point struct {
 	Y float64
 }
 
-// Need to define an entity
-// will be composed of a slice of circles
-type Entity struct {
-	Polygons []Polygon
-	Fitness  float64
-	DNA      *image.RGBA
-}
-
 type Polygon struct {
 	Number_of_sides int
 	Width           float64
 	Height          float64
 	Radius          float64
 	Color           []float64
+}
+
+// Need to define an entity
+// will be composed of a slice of circles
+type Entity struct {
+	Polygons []Polygon
+	Fitness  float64
+	DNA      *image.RGBA
 }
 
 func generatePolygon(n int, width float64, height float64, radius float64) (polygon Polygon) {
