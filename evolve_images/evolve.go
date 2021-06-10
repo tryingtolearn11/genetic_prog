@@ -224,30 +224,67 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 		pool = append(pool, population[j])
 	}
 
-	for i := 0; i < len(pool); i++ {
-		fmt.Println(pool[i].Fitness)
-	}
+	/*
+		for i := 0; i < len(pool); i++ {
+			fmt.Println(pool[i].Fitness)
+		}
+	*/
 
 	fmt.Println("Mating Pool : ", len(pool))
 
 	return
 }
 
-func generateNextGeneration(pool []Entity, population []Entity) (next_gen []Entity) {
+func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) []Entity {
+	next_gen := make([]Entity, len(population))
 	// make the next generation
 	for i := 0; i < len(population); i++ {
-		parentA := rand.Intn(len(pool))
-		parentB := rand.Intn(len(pool))
+		one := rand.Intn(len(pool))
+		two := rand.Intn(len(pool))
 
-		child := crossover(pool[parentA], pool[parentB])
+		// make ParentA the dominant Parent
+		// take the least random value and that will be
+		// parentA
+		/*
+			var parentA Entity
+			var parentB Entity
+				if one < two {
+					parentA = pool[one]
+					parentB = pool[two]
+				} else {
+					parentA = pool[two]
+					parentB = pool[one]
+				}
+		*/
+
+		child := crossover(pool[one], pool[two])
+		child.Fitness = calculateFitness(t, child.DNA)
 
 		next_gen[i] = child
 	}
 
-	return
+	return next_gen
 }
 
 func crossover(parentA Entity, parentB Entity) (child Entity) {
+	child = Entity{
+		DNA: &image.RGBA{
+			Pix:    make([]uint8, len(parentA.DNA.Pix)),
+			Stride: parentA.DNA.Stride,
+			Rect:   parentA.DNA.Rect,
+		},
+		Fitness: 0,
+	}
+
+	mid := rand.Intn(len(parentA.DNA.Pix))
+	for j := 0; j < len(parentA.DNA.Pix); j++ {
+		if j > mid {
+			child.DNA.Pix[j] = parentA.DNA.Pix[j]
+		} else {
+			child.DNA.Pix[j] = parentB.DNA.Pix[j]
+		}
+	}
+
 	return
 }
 
@@ -261,7 +298,13 @@ func main() {
 	population := generatePopulation(test_img.DNA)
 
 	//calculateFitness(img, test_img.DNA)
-	generateMatingPool(population)
+	matingPool := generateMatingPool(population)
+	nextGeneration := generateNextGeneration(matingPool, population, img)
+
+	for i := 0; i < len(nextGeneration); i++ {
+		fmt.Println(nextGeneration[i].Fitness)
+	}
+
 	saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 
 	// print tests
