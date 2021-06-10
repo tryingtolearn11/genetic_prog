@@ -38,8 +38,8 @@ func loadImg(filePath string) *image.RGBA {
 }
 
 var number_of_polygons = 50
-var mutationRate = 0.021
-var PopulationSize = 150
+var mutationRate = 0.01
+var PopulationSize = 100
 
 const S = 50
 const W = 250
@@ -205,9 +205,10 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 }
 
 func crossover(parentA Entity, parentB Entity) (child Entity) {
+	pix := make([]uint8, len(parentA.DNA.Pix))
 	child = Entity{
 		DNA: &image.RGBA{
-			Pix:    make([]uint8, len(parentA.DNA.Pix)),
+			Pix:    pix,
 			Stride: parentA.DNA.Stride,
 			Rect:   parentA.DNA.Rect,
 		},
@@ -229,7 +230,7 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 func (e *Entity) mutation() {
 	for j := 0; j < len(e.DNA.Pix); j++ {
 		chance := rand.Float64()
-		if chance <= mutationRate {
+		if chance < mutationRate {
 			e.DNA.Pix[j] = uint8(rand.Intn(255))
 		}
 	}
@@ -260,8 +261,8 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
-		fmt.Println("Generation : ", generation)
-		fmt.Println("Best Match : ", best.Fitness)
+		//fmt.Println("Generation : ", generation)
+		//fmt.Println("Best Match : ", best.Fitness)
 
 		if best.Fitness < 8000 {
 			match = true
@@ -269,7 +270,7 @@ func main() {
 			pool := generateMatingPool(population)
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
-			if generation%10 == 0 {
+			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 			}
