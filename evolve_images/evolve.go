@@ -87,7 +87,7 @@ func loadImg(filePath string) *image.RGBA {
 }
 
 var number_of_polygons = 50
-var mutationRate = 0.01
+var mutationRate = 0.021
 
 const S = 50
 const W = 250
@@ -202,6 +202,7 @@ func generatePopulation(i *image.RGBA) (population []Entity) {
 // best and the worst entity. The difference will the size of the pool and we
 // will take the 'difference' amount of entites starting from the top going
 // down
+// TODO: Review This Function - The fitness keeps increasing
 func generateMatingPool(population []Entity) (pool []Entity) {
 	// sort the population by fitness (the lower the fitness the better)
 	sort.SliceStable(population, func(i, j int) bool {
@@ -219,7 +220,7 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	}
 
 	// lets try a pool of top 30 + the difference amount as the extra organisms
-	for j := 0; j < poolSize+40; j++ {
+	for j := 0; j < poolSize+10; j++ {
 		pool = append(pool, population[j])
 	}
 
@@ -324,6 +325,8 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
+		fmt.Println("Generation : ", generation)
+		fmt.Println("Best Match : ", best.Fitness)
 
 		if best.Fitness < 8000 {
 			match = true
@@ -332,7 +335,7 @@ func main() {
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
 			if generation%10 == 0 {
-				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d", time_taken, generation, best.Fitness, len(pool))
+				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 			}
 		}
