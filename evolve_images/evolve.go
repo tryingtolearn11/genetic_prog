@@ -215,9 +215,12 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	fmt.Println("Difference : ", difference)
 
 	poolSize := int(difference)
+	if poolSize >= len(population) {
+		poolSize = 100
+	}
 
-	// lets try a pool of top 20 + the difference amount as the extra organisms
-	for j := 0; j < poolSize+20; j++ {
+	// lets try a pool of top 30 + the difference amount as the extra organisms
+	for j := 0; j < poolSize+30; j++ {
 		pool = append(pool, population[j])
 	}
 
@@ -227,6 +230,24 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 
 	fmt.Println("Mating Pool : ", len(pool))
 
+	return
+}
+
+func generateNextGeneration(pool []Entity, population []Entity) (next_gen []Entity) {
+	// make the next generation
+	for i := 0; i < len(population); i++ {
+		parentA := rand.Intn(len(pool))
+		parentB := rand.Intn(len(pool))
+
+		child := crossover(pool[parentA], pool[parentB])
+
+		next_gen[i] = child
+	}
+
+	return
+}
+
+func crossover(parentA Entity, parentB Entity) (child Entity) {
 	return
 }
 
