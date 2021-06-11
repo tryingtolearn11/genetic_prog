@@ -37,12 +37,13 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 100
-var mutationRate = 0.01
-var PopulationSize = 50
+var number_of_polygons = 90
+var mutationRate = 0.001
+var PopulationSize = 60
 
-//var sidesNum = rand.Intn(6-3) + 3
-var sidesNum = 3
+var sidesNum = rand.Intn(6-3) + 3
+
+//var sidesNum = 3
 
 //const S = 50
 
@@ -214,9 +215,9 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 		Fitness:  0,
 	}
 
-	mid := rand.Intn(len(parentA.Polygons))
+	mid := len(parentA.Polygons) / 2
 	for j := 0; j < len(parentA.Polygons); j++ {
-		if j > mid {
+		if j <= mid {
 			child.Polygons[j] = parentA.Polygons[j]
 		} else {
 			child.Polygons[j] = parentB.Polygons[j]
