@@ -37,12 +37,15 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 50
+var number_of_polygons = 100
 var mutationRate = 0.01
-var PopulationSize = 150
-var sidesNum = rand.Intn(6-3) + 3
+var PopulationSize = 50
 
-const S = 50
+//var sidesNum = rand.Intn(6-3) + 3
+var sidesNum = 3
+
+//const S = 50
+
 const W = 250
 const H = 281
 
@@ -155,7 +158,7 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 20
+	Poolsize := 10
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -225,6 +228,7 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 	return child
 }
 
+// mutate the []polygon
 func (e *Entity) mutation() {
 	for j := 0; j < len(e.Polygons); j++ {
 		chance := rand.Float64()
@@ -261,8 +265,8 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
-		//fmt.Println("Generation : ", generation)
-		//fmt.Println("Best Match : ", best.Fitness)
+		//		fmt.Println("Generation : ", generation)
+		//		fmt.Println("Best Match : ", best.Fitness)
 
 		if best.Fitness < 8000 {
 			match = true
