@@ -223,13 +223,24 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 		Polygons: make([]Polygon, len(parentA.Polygons)),
 		Fitness:  0,
 	}
+	/*
+		mid := rand.Intn(len(parentA.Polygons))
+		for j := 0; j < len(parentA.Polygons); j++ {
+			if j > mid {
+				child.Polygons[j] = parentA.Polygons[j]
+			} else {
+				child.Polygons[j] = parentB.Polygons[j]
+			}
+		}
+	*/
 
-	mid := rand.Intn(len(parentA.Polygons))
-	for j := 0; j < len(parentA.Polygons); j++ {
-		if j > mid {
-			child.Polygons[j] = parentA.Polygons[j]
+	// 50% chance to come from either parent
+	for i := 0; i < len(parentA.Polygons); i++ {
+		chance := rand.Intn(100)
+		if chance > 50 {
+			child.Polygons[i] = parentA.Polygons[i]
 		} else {
-			child.Polygons[j] = parentB.Polygons[j]
+			child.Polygons[i] = parentB.Polygons[i]
 		}
 	}
 
@@ -291,7 +302,7 @@ func main() {
 			pool := generateMatingPool(population, img)
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
-			if generation%50 == 0 {
+			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", best.DNA)
 			}
