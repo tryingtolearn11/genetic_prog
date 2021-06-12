@@ -39,7 +39,7 @@ func loadImg(filePath string) *image.RGBA {
 
 var number_of_polygons = 90
 var mutationRate = 0.001
-var PopulationSize = 60
+var PopulationSize = 100
 
 //var sidesNum = rand.Intn(6-3) + 3
 
@@ -140,7 +140,11 @@ func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
 	fitness = math.Sqrt(p)
 
 	//	fmt.Println("FITNESS :", fitness)
-	return fitness
+	if fitness == 0 {
+		return 1
+	} else {
+		return fitness
+	}
 }
 
 // Create a Population of 100 Entitys
@@ -158,7 +162,8 @@ func generateMatingPool(population []Entity) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 10
+	//fmt.Println("Best fitness  from Sorted Gen : ", population[0].Fitness)
+	Poolsize := 20
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -187,15 +192,19 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 		// parentA.
 		// OR PERHAPS : Compare the fitnesses and make the least the dominant
 		// parent!
-		var parentA Entity
-		var parentB Entity
-		if one.Fitness < two.Fitness {
-			parentA = one
-			parentB = two
-		} else {
-			parentA = two
-			parentB = one
-		}
+		/*
+			var parentA Entity
+			var parentB Entity
+			if one.Fitness < two.Fitness {
+				parentA = one
+				parentB = two
+			} else {
+				parentA = two
+				parentB = one
+			}
+		*/
+		parentA := one
+		parentB := two
 
 		child := crossover(parentA, parentB)
 		child.mutation()
@@ -203,7 +212,7 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 
 		next_gen[i] = child
 	}
-
+	//fmt.Println("len of next_gen", len(next_gen))
 	return next_gen
 }
 
@@ -211,12 +220,12 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 func crossover(parentA Entity, parentB Entity) (child Entity) {
 	child = Entity{
 		Polygons: make([]Polygon, len(parentA.Polygons)),
-		//Fitness:  0,
+		Fitness:  0,
 	}
 
-	mid := len(parentA.Polygons) / 2
+	mid := rand.Intn(len(parentA.Polygons))
 	for j := 0; j < len(parentA.Polygons); j++ {
-		if j <= mid {
+		if j > mid {
 			child.Polygons[j] = parentA.Polygons[j]
 		} else {
 			child.Polygons[j] = parentB.Polygons[j]
@@ -240,16 +249,23 @@ func (e *Entity) mutation() {
 	e.DNA = display(e.DNA.Rect.Dx(), e.DNA.Rect.Dy(), e.Polygons)
 }
 
+// doesnt return the least fitness
 func successor(p []Entity) (e Entity) {
-	model := float64(0)
-	position := 0
-	for i := 0; i < len(p); i++ {
-		if p[i].Fitness > model {
-			position = i
-			model = p[i].Fitness
+	/*
+		model := float64(0)
+		position := 0
+		for i := 0; i < len(p); i++ {
+			if p[i].Fitness > model {
+				position = i
+				model = p[i].Fitness
+			}
 		}
-	}
-	return p[position]
+	*/
+	// just sort
+	sort.SliceStable(p, func(i, j int) bool {
+		return p[i].Fitness < p[j].Fitness
+	})
+	return p[0]
 }
 
 func main() {
@@ -265,8 +281,8 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
-		//		fmt.Println("Generation : ", generation)
-		//		fmt.Println("Best Match : ", best.Fitness)
+		//fmt.Println("Generation : ", generation)
+		//fmt.Println("Best Match : ", best.Fitness)
 
 		if best.Fitness < 8000 {
 			match = true
@@ -274,7 +290,7 @@ func main() {
 			pool := generateMatingPool(population)
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
-			if generation%20 == 0 {
+			if generation%50 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
 			}
