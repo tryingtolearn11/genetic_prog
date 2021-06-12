@@ -41,9 +41,9 @@ var number_of_polygons = 90
 var mutationRate = 0.001
 var PopulationSize = 60
 
-var sidesNum = rand.Intn(6-3) + 3
+//var sidesNum = rand.Intn(6-3) + 3
 
-//var sidesNum = 3
+var sidesNum = 3
 
 //const S = 50
 
@@ -110,7 +110,6 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 }
 
 func display(width int, height int, pa []Polygon) *image.RGBA {
-	//const number_of_polygons = 120
 	end := image.NewRGBA(image.Rect(0, 0, width, height))
 	dc := gg.NewContextForRGBA(end)
 	for _, poly := range pa {
@@ -180,25 +179,25 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 	next_gen := make([]Entity, len(population))
 	// make the next generation
 	for i := 0; i < len(population); i++ {
-		one := rand.Intn(len(pool))
-		two := rand.Intn(len(pool))
+		one := pool[rand.Intn(len(pool))]
+		two := pool[rand.Intn(len(pool))]
 
 		// make ParentA the dominant Parent
 		// take the least random value and that will be
-		// parentA
-		/*
-			var parentA Entity
-			var parentB Entity
-				if one < two {
-					parentA = pool[one]
-					parentB = pool[two]
-				} else {
-					parentA = pool[two]
-					parentB = pool[one]
-				}
-		*/
+		// parentA.
+		// OR PERHAPS : Compare the fitnesses and make the least the dominant
+		// parent!
+		var parentA Entity
+		var parentB Entity
+		if one.Fitness < two.Fitness {
+			parentA = one
+			parentB = two
+		} else {
+			parentA = two
+			parentB = one
+		}
 
-		child := crossover(pool[one], pool[two])
+		child := crossover(parentA, parentB)
 		child.mutation()
 		child.Fitness = calculateFitness(t, child.DNA)
 
@@ -212,7 +211,7 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 func crossover(parentA Entity, parentB Entity) (child Entity) {
 	child = Entity{
 		Polygons: make([]Polygon, len(parentA.Polygons)),
-		Fitness:  0,
+		//Fitness:  0,
 	}
 
 	mid := len(parentA.Polygons) / 2
