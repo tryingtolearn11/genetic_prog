@@ -292,7 +292,7 @@ func main() {
 			time_taken := time.Since(start)
 			if generation%50 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
-				saveImg("../static/pictures/"+"dna.png", test_img.DNA)
+				saveImg("../static/pictures/"+"dna.png", best.DNA)
 			}
 		}
 	}
