@@ -37,7 +37,7 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 90
+var number_of_polygons = 50
 var mutationRate = 0.001
 var PopulationSize = 100
 
@@ -47,8 +47,8 @@ var sidesNum = 3
 
 //const S = 50
 
-const W = 250
-const H = 281
+//const W = 250
+//const H = 281
 
 type Point struct {
 	X float64
@@ -67,7 +67,7 @@ type Polygon struct {
 // will be composed of a slice of circles
 type Entity struct {
 	Polygons []Polygon
-	Fitness  float64
+	Fitness  int64
 	DNA      *image.RGBA
 }
 
@@ -129,15 +129,15 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 
 // 2 images are different = fitness of len(a.Pix),
 // 2 images are same = fitness of 0
-func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
+func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness int64) {
 	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
 	var p float64
 	for x := 0; x < len(a.Pix); x++ {
-		p += math.Pow(float64(a.Pix[x])-float64(b.Pix[x]), 2)
+		p += math.Pow(float64(int64(a.Pix[x])-int64(b.Pix[x])), 2)
 	}
 
-	fitness = math.Sqrt(p)
+	fitness = int64(math.Sqrt(p))
 
 	//	fmt.Println("FITNESS :", fitness)
 	if fitness == 0 {
@@ -147,7 +147,7 @@ func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness float64) {
 	}
 }
 
-// Create a Population of 100 Entitys
+// Create a Population of x Entitys
 func generatePopulation(i *image.RGBA) (population []Entity) {
 	for k := 0; k < PopulationSize; k++ {
 		organism := generateEntity(i)
@@ -156,7 +156,6 @@ func generatePopulation(i *image.RGBA) (population []Entity) {
 	return population
 }
 
-// TODO: Review This Function - The fitness keeps increasing
 func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	pool = make([]Entity, 0)
 
@@ -164,7 +163,7 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 10
+	Poolsize := 20
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -185,6 +184,7 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 	next_gen := make([]Entity, len(population))
 	// make the next generation
 	for i := 0; i < len(population); i++ {
+		// TODO: try to have 2 unique parents and not the same
 		one := pool[rand.Intn(len(pool))]
 		two := pool[rand.Intn(len(pool))]
 
@@ -193,46 +193,31 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 		// parentA.
 		// OR PERHAPS : Compare the fitnesses and make the least the dominant
 		// parent!
-		/*
-			var parentA Entity
-			var parentB Entity
-			if one.Fitness < two.Fitness {
-				parentA = one
-				parentB = two
-			} else {
-				parentA = two
-				parentB = one
-			}
-		*/
-		parentA := one
-		parentB := two
+		var parentA Entity
+		var parentB Entity
+		if one.Fitness < two.Fitness {
+			parentA = one
+			parentB = two
+		} else {
+			parentA = two
+			parentB = one
+		}
+		//		parentA := one
+		//		parentB := two
 
 		child := crossover(parentA, parentB)
 		child.mutation()
 		child.Fitness = calculateFitness(t, child.DNA)
-
 		next_gen[i] = child
 	}
-	//fmt.Println("len of next_gen", len(next_gen))
 	return next_gen
 }
 
-//TODO : BUG was here. Reminder to review
 func crossover(parentA Entity, parentB Entity) (child Entity) {
 	child = Entity{
 		Polygons: make([]Polygon, len(parentA.Polygons)),
 		Fitness:  0,
 	}
-	/*
-		mid := rand.Intn(len(parentA.Polygons))
-		for j := 0; j < len(parentA.Polygons); j++ {
-			if j > mid {
-				child.Polygons[j] = parentA.Polygons[j]
-			} else {
-				child.Polygons[j] = parentB.Polygons[j]
-			}
-		}
-	*/
 
 	// 50% chance to come from either parent
 	for i := 0; i < len(parentA.Polygons); i++ {
@@ -263,16 +248,6 @@ func (e *Entity) mutation() {
 
 // doesnt return the least fitness
 func successor(p []Entity) (e Entity) {
-	/*
-		model := float64(0)
-		position := 0
-		for i := 0; i < len(p); i++ {
-			if p[i].Fitness > model {
-				position = i
-				model = p[i].Fitness
-			}
-		}
-	*/
 	// just sort
 	sort.SliceStable(p, func(i, j int) bool {
 		return p[i].Fitness < p[j].Fitness
@@ -286,6 +261,7 @@ func main() {
 	fmt.Println("Running evolve_pictures")
 	match := false
 	img := loadImg("./test_imgs/resized_clown.png")
+
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
 	generation := 0
@@ -303,7 +279,7 @@ func main() {
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
 			if generation%100 == 0 {
-				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %f | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
+				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
 				saveImg("../static/pictures/"+"dna.png", best.DNA)
 			}
 		}
