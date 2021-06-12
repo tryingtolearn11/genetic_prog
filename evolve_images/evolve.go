@@ -157,13 +157,14 @@ func generatePopulation(i *image.RGBA) (population []Entity) {
 }
 
 // TODO: Review This Function - The fitness keeps increasing
-func generateMatingPool(population []Entity) (pool []Entity) {
+func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
+	pool = make([]Entity, 0)
+
 	// sort the population by fitness (the lower the fitness the better)
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	//fmt.Println("Best fitness  from Sorted Gen : ", population[0].Fitness)
-	Poolsize := 20
+	Poolsize := 10
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -287,7 +288,7 @@ func main() {
 		if best.Fitness < 8000 {
 			match = true
 		} else {
-			pool := generateMatingPool(population)
+			pool := generateMatingPool(population, img)
 			population = generateNextGeneration(pool, population, img)
 			time_taken := time.Since(start)
 			if generation%50 == 0 {
