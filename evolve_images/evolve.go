@@ -12,6 +12,13 @@ import (
 	"time"
 )
 
+var number_of_polygons = 80
+var mutationRate = 0.0001
+var PopulationSize = 100
+
+//var sidesNum = rand.Intn(6-3) + 3
+var sidesNum = 3
+
 // where to save generated image
 func saveImg(filePath string, rgba *image.RGBA) {
 	img, err := os.Create(filePath)
@@ -37,21 +44,6 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-var number_of_polygons = 80
-var mutationRate = 0.009
-var PopulationSize = 150
-
-//var sidesNum = rand.Intn(6-3) + 3
-var sidesNum = 3
-
-/*
-
-type Point struct {
-	X float64
-	Y float64
-}
-
-*/
 type Polygon struct {
 	Number_of_sides int
 	Width           float64
@@ -161,7 +153,7 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 15
+	Poolsize := 25
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -181,37 +173,12 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 
 func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) []Entity {
 	next_gen := make([]Entity, len(population))
-	var one Entity
-	var two Entity
-	var different = false
 	// make the next generation
 	for i := 0; i < len(population); i++ {
-		// TODO: try to have 2 unique parents and not the same
 
-		for !different {
-			one = pool[rand.Intn(len(pool))]
-			two = pool[rand.Intn(len(pool))]
-			if one.Fitness != two.Fitness {
-				different = true
-			}
-		}
+		one := pool[rand.Intn(len(pool))]
+		two := pool[rand.Intn(len(pool))]
 
-		// make ParentA the dominant Parent
-		// take the least random value and that will be
-		// parentA.
-		// OR PERHAPS : Compare the fitnesses and make the least the dominant
-		// parent!
-		/*
-			var parentA Entity
-			var parentB Entity
-			if one.Fitness < two.Fitness {
-				parentA = one
-				parentB = two
-			} else {
-				parentA = two
-				parentB = one
-			}
-		*/
 		parentA := one
 		parentB := two
 
