@@ -121,6 +121,7 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 
 // 2 images are different = fitness of len(a.Pix),
 // 2 images are same = fitness of 0
+// TODO: EVOLUTION BUG WAS STUCK HERE!!!
 func (e *Entity) calculateFitness(a *image.RGBA) {
 	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
@@ -160,9 +161,9 @@ func squareD(a, b uint8) uint64 {
 
 // Create a Population of x Entitys
 func generatePopulation(i *image.RGBA) (population []Entity) {
+	population = make([]Entity, PopulationSize)
 	for k := 0; k < PopulationSize; k++ {
-		organism := generateEntity(i)
-		population = append(population, organism)
+		population[k] = generateEntity(i)
 	}
 	return population
 }
@@ -174,7 +175,7 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 25
+	Poolsize := 15
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -221,9 +222,9 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 	for i := 0; i < len(parentA.Polygons); i++ {
 		chance := rand.Intn(100)
 		if chance > 50 {
-			child.Polygons[i] = parentA.Polygons[i]
-		} else {
 			child.Polygons[i] = parentB.Polygons[i]
+		} else {
+			child.Polygons[i] = parentA.Polygons[i]
 		}
 	}
 
@@ -263,22 +264,42 @@ func main() {
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
 	generation := 0
+	// keeping track of the previous gen
+	//prev_population := population
+	prev_best := test_img
+	peakEntity := test_img
+	prev_best.Fitness = int64(9999999)
 
 	for !match {
 		generation++
 		best := successor(population)
-		fmt.Println("Generation : ", generation)
-		fmt.Println("Best Match : ", best.Fitness)
+		// tracking the peak fitness
+		if best.Fitness < peakEntity.Fitness {
+			peakEntity = best
+		}
 
-		if best.Fitness < 8000 {
+		// if previous population is fitter -> use that as the new population
+		// instead
+		/*
+			if prev_best.Fitness < best.Fitness {
+				population = prev_population
+			}
+		*/
+
+		//fmt.Println(" Gen : ", generation, best.Fitness, "prev fitness : ", prev_bestFitness)
+
+		if best.Fitness < 7500 {
 			match = true
 		} else {
 			pool := generateMatingPool(population, img)
 			population = generateNextGeneration(pool, population, img)
+			// store the best fitness before looping
+			prev_best = best
+
 			time_taken := time.Since(start)
-			if generation%100 == 0 {
-				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d ", time_taken, generation, best.Fitness, len(pool))
-				saveImg("../static/pictures/"+"dna.png", best.DNA)
+			if generation%50 == 0 {
+				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
+				saveImg("../static/pictures/"+"dna.png", peakEntity.DNA)
 			}
 		}
 	}
