@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-var number_of_polygons = 80
-var mutationRate = 0.0001
+var number_of_polygons = 100
+var mutationRate = 0.001
 var PopulationSize = 100
 
 //var sidesNum = rand.Intn(6-3) + 3
@@ -92,9 +92,11 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 	entity_image := display(i.Rect.Dx(), i.Rect.Dy(), polygon_array)
 	entity = Entity{
 		Polygons: polygon_array,
-		Fitness:  calculateFitness(i, entity_image),
+		Fitness:  0,
 		DNA:      entity_image,
 	}
+
+	entity.calculateFitness(i)
 
 	return
 }
@@ -119,22 +121,41 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 
 // 2 images are different = fitness of len(a.Pix),
 // 2 images are same = fitness of 0
-func calculateFitness(a *image.RGBA, b *image.RGBA) (fitness int64) {
+func (e *Entity) calculateFitness(a *image.RGBA) {
 	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
-	var p float64
-	for x := 0; x < len(a.Pix); x++ {
-		p += math.Pow(float64(int64(a.Pix[x])-int64(b.Pix[x])), 2)
-	}
+	/*
+		var p int64
+		for x := 0; x < len(a.Pix); x++ {
+			p += int64(math.Pow(float64(uint64(a.Pix[x])-uint64(b.Pix[x])), 2))
 
-	fitness = int64(math.Sqrt(p))
+		}
 
-	//	fmt.Println("FITNESS :", fitness)
+		fitness = int64(math.Sqrt(float64(p)))
+
+		fmt.Println("FITNESS :", fitness)
+	*/
+
+	fitness := difference(e.DNA, a)
+
 	if fitness == 0 {
-		return 1
+		e.Fitness = 1
 	} else {
-		return fitness
+		e.Fitness = fitness
 	}
+}
+
+func difference(a *image.RGBA, b *image.RGBA) (p int64) {
+	p = 0
+	for i := 0; i < len(a.Pix); i++ {
+		p += int64(squareD(a.Pix[i], b.Pix[i]))
+	}
+	return int64(math.Sqrt(float64(p)))
+}
+
+func squareD(a, b uint8) uint64 {
+	k := uint64(a) - uint64(b)
+	return k * k
 }
 
 // Create a Population of x Entitys
@@ -184,7 +205,7 @@ func generateNextGeneration(pool []Entity, population []Entity, t *image.RGBA) [
 
 		child := crossover(parentA, parentB)
 		child.mutation()
-		child.Fitness = calculateFitness(t, child.DNA)
+		child.calculateFitness(t)
 		next_gen[i] = child
 	}
 	return next_gen
@@ -246,8 +267,8 @@ func main() {
 	for !match {
 		generation++
 		best := successor(population)
-		//		fmt.Println("Generation : ", generation)
-		//		fmt.Println("Best Match : ", best.Fitness)
+		fmt.Println("Generation : ", generation)
+		fmt.Println("Best Match : ", best.Fitness)
 
 		if best.Fitness < 8000 {
 			match = true
