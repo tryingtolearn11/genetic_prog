@@ -14,9 +14,9 @@ import (
 	"time"
 )
 
-var number_of_polygons = 100
+var number_of_polygons = 150
 var mutationRate = 0.001
-var PopulationSize = 100
+var PopulationSize = 150
 
 //var sidesNum = rand.Intn(6-3) + 3
 var sidesNum = 3
@@ -114,12 +114,13 @@ type Entity struct {
 
 func generatePolygon(width int, height int) (p Polygon) {
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(30) - 15), Y: p1.Y + (rand.Intn(30) - 15)}
-	p3 := Point{X: p1.X + (rand.Intn(30) - 15), Y: p1.Y + (rand.Intn(30) - 15)}
+	p2 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
+	p3 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
 	r := uint8(rand.Intn(255))
 	g := uint8(rand.Intn(255))
 	b := uint8(rand.Intn(255))
-	a := uint8(50)
+	//a := uint8(50)
+	a := uint8(rand.Intn(255))
 	p = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
