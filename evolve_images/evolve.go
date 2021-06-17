@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	//	"github.com/fogleman/gg"
 	"github.com/llgcode/draw2d/draw2dimg"
 	"image"
 	"image/color"
@@ -15,8 +14,9 @@ import (
 )
 
 var number_of_polygons = 150
-var mutationRate = 0.001
-var PopulationSize = 150
+var mutationRate = 0.01
+var PopulationSize = 250
+var Poolsize = 25
 
 //var sidesNum = rand.Intn(6-3) + 3
 var sidesNum = 3
@@ -114,8 +114,8 @@ type Entity struct {
 
 func generatePolygon(width int, height int) (p Polygon) {
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
-	p3 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
+	p2 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
+	p3 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
 	r := uint8(rand.Intn(255))
 	g := uint8(rand.Intn(255))
 	b := uint8(rand.Intn(255))
@@ -228,7 +228,6 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
-	Poolsize := 15
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -324,7 +323,7 @@ func main() {
 	fmt.Println("Running evolve_pictures")
 	match := false
 	//img := loadImg("./test_imgs/resized_clown.png")
-	img := loadImg("./test_imgs/small.png")
+	img := loadImg("./test_imgs/monaimage.png")
 
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
@@ -353,7 +352,7 @@ func main() {
 
 		//fmt.Println(" Gen : ", generation, best.Fitness, "prev fitness : ", prev_bestFitness)
 
-		if best.Fitness < 8000 {
+		if best.Fitness < 20 {
 			match = true
 		} else {
 			pool := generateMatingPool(population, img)
