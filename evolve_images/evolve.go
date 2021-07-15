@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/llgcode/draw2d/draw2dimg"
+	"github.com/fogleman/gg"
 	"image"
-	"image/color"
 	"image/png"
 	"math"
 	"math/rand"
@@ -13,9 +12,9 @@ import (
 	"time"
 )
 
-var number_of_polygons = 100
+var number_of_polygons = 300
 var mutationRate = 0.01
-var PopulationSize = 250
+var PopulationSize = 100
 var Poolsize = 25
 
 //var sidesNum = rand.Intn(6-3) + 3
@@ -47,50 +46,6 @@ func loadImg(filePath string) *image.RGBA {
 }
 
 /*
-type Polygon struct {
-	Number_of_sides int
-	Width           float64
-	Height          float64
-	Radius          float64
-	Color           []float64
-}
-
-func generatePolygon(n int, width float64, height float64, radius float64) (polygon Polygon) {
-	r := float64(rand.Intn(255))
-	g := float64(rand.Intn(255))
-	b := float64(rand.Intn(255))
-	//a := float64(rand.Intn(255))
-	a := 0.5
-	polygon = Polygon{
-		Number_of_sides: n,
-		Width:           width,
-		Height:          height,
-		Radius:          radius,
-		Color:           []float64{r, g, b, a},
-	}
-	return
-}
-
-
-func display(width int, height int, pa []Polygon) *image.RGBA {
-	end := image.NewRGBA(image.Rect(0, 0, width, height))
-	dc := gg.NewContextForRGBA(end)
-	for _, poly := range pa {
-		rotation := float64(rand.Intn(360))
-		dc.DrawRegularPolygon(poly.Number_of_sides, poly.Width, poly.Height, poly.Radius, rotation)
-		dc.Push()
-		dc.SetRGBA(poly.Color[0], poly.Color[1], poly.Color[2], poly.Color[3])
-		dc.SetLineWidth(1)
-		dc.StrokePreserve()
-		dc.Fill()
-		dc.Pop()
-
-	}
-
-	return end
-}
-
-*/
 
 type Point struct {
 	X int
@@ -104,55 +59,23 @@ type Polygon struct {
 	Color      color.Color
 }
 
-// Need to define an entity
-// will be composed of a slice of circles
-type Entity struct {
-	Polygons []Polygon
-	Fitness  int64
-	DNA      *image.RGBA
-}
 
 func generatePolygon(width int, height int) (p Polygon) {
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
 	p2 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
 	p3 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
+	//	p2 := Point{X: p1.X + (rand.Intn(40)), Y: p1.Y + (rand.Intn(40))}
+	//	p3 := Point{X: p1.X + (rand.Intn(40)), Y: p1.Y + (rand.Intn(40))}
 	r := uint8(rand.Intn(255))
 	g := uint8(rand.Intn(255))
 	b := uint8(rand.Intn(255))
-	a := uint8(50)
-	//a := uint8(rand.Intn(255))
+	a := uint8(rand.Intn(255))
 	p = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
 		PointThree: p3,
 		Color:      color.RGBA{r, g, b, a},
 	}
-	return
-}
-
-// Now to create the entity
-// An Entity is composed of an array of Polygons
-func generateEntity(i *image.RGBA) (entity Entity) {
-	polygon_array := make([]Polygon, number_of_polygons)
-
-	for k := 0; k < number_of_polygons; k++ {
-		//width := rand.Intn(i.Rect.Dx())
-		//height := rand.Intn(i.Rect.Dy())
-		//r := float64(rand.Intn(100))
-		//polygon_array[k] = generatePolygon(sidesNum, width, height, r)
-		polygon_array[k] = generatePolygon(i.Rect.Dx(), i.Rect.Dy())
-
-	}
-
-	entity_image := display(i.Rect.Dx(), i.Rect.Dy(), polygon_array)
-	entity = Entity{
-		Polygons: polygon_array,
-		Fitness:  0,
-		DNA:      entity_image,
-	}
-
-	entity.calculateFitness(i)
-
 	return
 }
 
@@ -171,10 +94,82 @@ func display(width int, height int, polygons []Polygon) *image.RGBA {
 	}
 	return dest
 }
+*/
 
-// 2 images are different = fitness of len(a.Pix),
-// 2 images are same = fitness of 0
-// TODO: EVOLUTION BUG WAS STUCK HERE!!!
+type Polygon struct {
+	Number_of_sides int
+	Width           int
+	Height          int
+	Radius          float64
+	Color           []float64
+}
+
+// Need to define an entity
+// will be composed of a slice of circles
+type Entity struct {
+	Polygons []Polygon
+	Fitness  int64
+	DNA      *image.RGBA
+}
+
+func generatePolygon(n int, width int, height int, radius float64) (polygon Polygon) {
+	r := float64(rand.Intn(255))
+	g := float64(rand.Intn(255))
+	b := float64(rand.Intn(255))
+	//a := float64(rand.Intn(255))
+	a := 0.5
+	polygon = Polygon{
+		Number_of_sides: n,
+		Width:           width,
+		Height:          height,
+		Radius:          radius,
+		Color:           []float64{r, g, b, a},
+	}
+	return
+}
+
+func display(width int, height int, pa []Polygon) *image.RGBA {
+	end := image.NewRGBA(image.Rect(0, 0, width, height))
+	dc := gg.NewContextForRGBA(end)
+	for _, poly := range pa {
+		rotation := float64(rand.Intn(360))
+		dc.DrawRegularPolygon(poly.Number_of_sides, float64(poly.Width), float64(poly.Height), poly.Radius, rotation)
+		dc.Push()
+		dc.SetRGBA(poly.Color[0], poly.Color[1], poly.Color[2], poly.Color[3])
+		dc.SetLineWidth(1)
+		dc.StrokePreserve()
+		dc.Fill()
+		dc.Pop()
+	}
+
+	return end
+}
+
+// Now to create the entity
+// An Entity is composed of an array of Polygons
+func generateEntity(i *image.RGBA) (entity Entity) {
+	polygon_array := make([]Polygon, number_of_polygons)
+
+	for k := 0; k < number_of_polygons; k++ {
+		width := rand.Intn(i.Rect.Dx())
+		height := rand.Intn(i.Rect.Dy())
+		r := float64(rand.Intn(100))
+		polygon_array[k] = generatePolygon(sidesNum, width, height, r)
+
+	}
+
+	entity_image := display(i.Rect.Dx(), i.Rect.Dy(), polygon_array)
+	entity = Entity{
+		Polygons: polygon_array,
+		Fitness:  0,
+		DNA:      entity_image,
+	}
+
+	entity.calculateFitness(i)
+
+	return
+}
+
 func (e *Entity) calculateFitness(a *image.RGBA) {
 	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
 	// go thru the pixels and find the difference
@@ -300,9 +295,9 @@ func (e *Entity) mutation() {
 	for j := 0; j < len(e.Polygons); j++ {
 		chance := rand.Float64()
 		if chance < mutationRate {
-			//r := float64(rand.Intn(100))
-			//e.Polygons[j] = generatePolygon(sidesNum, float64(e.DNA.Rect.Dx()), float64(e.DNA.Rect.Dy()), r)
-			e.Polygons[j] = generatePolygon(e.DNA.Rect.Dx(), e.DNA.Rect.Dy())
+			r := float64(rand.Intn(50))
+			e.Polygons[j] = generatePolygon(sidesNum, int(e.DNA.Rect.Dx()), int(e.DNA.Rect.Dy()), r)
+			//e.Polygons[j] = generatePolygon(e.DNA.Rect.Dx(), e.DNA.Rect.Dy())
 		}
 	}
 	e.DNA = display(e.DNA.Rect.Dx(), e.DNA.Rect.Dy(), e.Polygons)
@@ -323,7 +318,8 @@ func main() {
 	fmt.Println("Running evolve_pictures")
 	match := false
 	//img := loadImg("./test_imgs/resized_clown.png")
-	img := loadImg("./test_imgs/monaimage.png")
+	//img := loadImg("./test_imgs/monaimage.png")
+	img := loadImg("./test_imgs/mona1.png")
 
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
@@ -361,9 +357,9 @@ func main() {
 			prev_best = best
 
 			time_taken := time.Since(start)
-			if generation%100 == 0 {
+			if generation%25 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
-				saveImg("../static/pictures/"+"dna.png", peakEntity.DNA)
+				saveImg("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
 		}
 	}
