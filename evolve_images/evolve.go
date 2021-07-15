@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var number_of_polygons = 300
+var number_of_polygons = 250
 var mutationRate = 0.01
 var PopulationSize = 100
 var Poolsize = 25
@@ -47,10 +47,6 @@ func loadImg(filePath string) *image.RGBA {
 
 /*
 
-type Point struct {
-	X int
-	Y int
-}
 
 type Polygon struct {
 	PointOne   Point
@@ -96,12 +92,15 @@ func display(width int, height int, polygons []Polygon) *image.RGBA {
 }
 */
 
+type Point struct {
+	X int
+	Y int
+}
 type Polygon struct {
-	Number_of_sides int
-	Width           int
-	Height          int
-	Radius          float64
-	Color           []float64
+	PointOne   Point
+	PointTwo   Point
+	PointThree Point
+	Color      []float64
 }
 
 // Need to define an entity
@@ -112,18 +111,19 @@ type Entity struct {
 	DNA      *image.RGBA
 }
 
-func generatePolygon(n int, width int, height int, radius float64) (polygon Polygon) {
+func generatePolygon(width int, height int) (polygon Polygon) {
 	r := float64(rand.Intn(255))
 	g := float64(rand.Intn(255))
 	b := float64(rand.Intn(255))
-	//a := float64(rand.Intn(255))
-	a := 0.5
+	a := float64(rand.Intn(255))
+	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
+	p2 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
+	p3 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
 	polygon = Polygon{
-		Number_of_sides: n,
-		Width:           width,
-		Height:          height,
-		Radius:          radius,
-		Color:           []float64{r, g, b, a},
+		PointOne:   p1,
+		PointTwo:   p2,
+		PointThree: p3,
+		Color:      []float64{r, g, b, a},
 	}
 	return
 }
@@ -132,8 +132,9 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 	end := image.NewRGBA(image.Rect(0, 0, width, height))
 	dc := gg.NewContextForRGBA(end)
 	for _, poly := range pa {
-		rotation := float64(rand.Intn(360))
-		dc.DrawRegularPolygon(poly.Number_of_sides, float64(poly.Width), float64(poly.Height), poly.Radius, rotation)
+		dc.MoveTo(float64(poly.PointOne.X), float64(poly.PointOne.Y))
+		dc.LineTo(float64(poly.PointTwo.X), float64(poly.PointTwo.Y))
+		dc.LineTo(float64(poly.PointThree.X), float64(poly.PointThree.Y))
 		dc.Push()
 		dc.SetRGBA(poly.Color[0], poly.Color[1], poly.Color[2], poly.Color[3])
 		dc.SetLineWidth(1)
@@ -151,10 +152,7 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 	polygon_array := make([]Polygon, number_of_polygons)
 
 	for k := 0; k < number_of_polygons; k++ {
-		width := rand.Intn(i.Rect.Dx())
-		height := rand.Intn(i.Rect.Dy())
-		r := float64(rand.Intn(100))
-		polygon_array[k] = generatePolygon(sidesNum, width, height, r)
+		polygon_array[k] = generatePolygon(i.Rect.Dx(), i.Rect.Dy())
 
 	}
 
@@ -171,22 +169,7 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 }
 
 func (e *Entity) calculateFitness(a *image.RGBA) {
-	//fmt.Println("Len(a.Pix) : ", len(a.Pix))
-	// go thru the pixels and find the difference
-	/*
-		var p int64
-		for x := 0; x < len(a.Pix); x++ {
-			p += int64(math.Pow(float64(uint64(a.Pix[x])-uint64(b.Pix[x])), 2))
-
-		}
-
-		fitness = int64(math.Sqrt(float64(p)))
-
-		fmt.Println("FITNESS :", fitness)
-	*/
-
 	fitness := difference(e.DNA, a)
-
 	if fitness == 0 {
 		e.Fitness = 1
 	} else {
@@ -295,9 +278,7 @@ func (e *Entity) mutation() {
 	for j := 0; j < len(e.Polygons); j++ {
 		chance := rand.Float64()
 		if chance < mutationRate {
-			r := float64(rand.Intn(50))
-			e.Polygons[j] = generatePolygon(sidesNum, int(e.DNA.Rect.Dx()), int(e.DNA.Rect.Dy()), r)
-			//e.Polygons[j] = generatePolygon(e.DNA.Rect.Dx(), e.DNA.Rect.Dy())
+			e.Polygons[j] = generatePolygon(int(e.DNA.Rect.Dx()), int(e.DNA.Rect.Dy()))
 		}
 	}
 	e.DNA = display(e.DNA.Rect.Dx(), e.DNA.Rect.Dy(), e.Polygons)
@@ -338,16 +319,6 @@ func main() {
 			peakEntity = best
 		}
 
-		// if previous population is fitter -> use that as the new population
-		// instead
-		/*
-			if prev_best.Fitness < best.Fitness {
-				population = prev_population
-			}
-		*/
-
-		//fmt.Println(" Gen : ", generation, best.Fitness, "prev fitness : ", prev_bestFitness)
-
 		if best.Fitness < 20 {
 			match = true
 		} else {
@@ -357,7 +328,7 @@ func main() {
 			prev_best = best
 
 			time_taken := time.Since(start)
-			if generation%25 == 0 {
+			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				saveImg("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
