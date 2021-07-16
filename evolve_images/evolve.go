@@ -14,7 +14,7 @@ import (
 
 var number_of_polygons = 250
 var mutationRate = 0.01
-var PopulationSize = 100
+var PopulationSize = 300
 var Poolsize = 25
 
 //var sidesNum = rand.Intn(6-3) + 3
@@ -117,8 +117,8 @@ func generatePolygon(width int, height int) (polygon Polygon) {
 	b := float64(rand.Intn(255))
 	a := float64(rand.Intn(255))
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
-	p3 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
+	p2 := Point{X: p1.X + (rand.Intn(60) - 15), Y: p1.Y + (rand.Intn(60) - 15)}
+	p3 := Point{X: p1.X + (rand.Intn(60) - 15), Y: p1.Y + (rand.Intn(60) - 15)}
 	polygon = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
