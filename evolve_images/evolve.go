@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fogleman/gg"
 	"image"
-	"image/png"
+	//	"image/png"
 	"math"
 	"math/rand"
 	"os"
@@ -14,12 +14,10 @@ import (
 
 var number_of_polygons = 250
 var mutationRate = 0.01
-var PopulationSize = 300
+var PopulationSize = 50
 var Poolsize = 25
 
-//var sidesNum = rand.Intn(6-3) + 3
-var sidesNum = 3
-
+/*
 // where to save generated image
 func saveImg(filePath string, rgba *image.RGBA) {
 	img, err := os.Create(filePath)
@@ -29,6 +27,7 @@ func saveImg(filePath string, rgba *image.RGBA) {
 	}
 	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
+*/
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -44,53 +43,6 @@ func loadImg(filePath string) *image.RGBA {
 	}
 	return pic.(*image.RGBA)
 }
-
-/*
-
-
-type Polygon struct {
-	PointOne   Point
-	PointTwo   Point
-	PointThree Point
-	Color      color.Color
-}
-
-
-func generatePolygon(width int, height int) (p Polygon) {
-	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
-	p3 := Point{X: p1.X + (rand.Intn(50) - 20), Y: p1.Y + (rand.Intn(50) - 20)}
-	//	p2 := Point{X: p1.X + (rand.Intn(40)), Y: p1.Y + (rand.Intn(40))}
-	//	p3 := Point{X: p1.X + (rand.Intn(40)), Y: p1.Y + (rand.Intn(40))}
-	r := uint8(rand.Intn(255))
-	g := uint8(rand.Intn(255))
-	b := uint8(rand.Intn(255))
-	a := uint8(rand.Intn(255))
-	p = Polygon{
-		PointOne:   p1,
-		PointTwo:   p2,
-		PointThree: p3,
-		Color:      color.RGBA{r, g, b, a},
-	}
-	return
-}
-
-func display(width int, height int, polygons []Polygon) *image.RGBA {
-	dest := image.NewRGBA(image.Rect(0, 0, width, height))
-	gc := draw2dimg.NewGraphicContext(dest)
-
-	for _, p := range polygons {
-		gc.SetFillColor(p.Color)
-		gc.SetStrokeColor(p.Color)
-		gc.MoveTo(float64(p.PointOne.X), float64(p.PointOne.Y))
-		gc.LineTo(float64(p.PointTwo.X), float64(p.PointTwo.Y))
-		gc.LineTo(float64(p.PointThree.X), float64(p.PointThree.Y))
-		gc.Close()
-		gc.Fill()
-	}
-	return dest
-}
-*/
 
 type Point struct {
 	X int
@@ -117,8 +69,8 @@ func generatePolygon(width int, height int) (polygon Polygon) {
 	b := float64(rand.Intn(255))
 	a := float64(rand.Intn(255))
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(60) - 15), Y: p1.Y + (rand.Intn(60) - 15)}
-	p3 := Point{X: p1.X + (rand.Intn(60) - 15), Y: p1.Y + (rand.Intn(60) - 15)}
+	p2 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
+	p3 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
 	polygon = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
@@ -150,10 +102,8 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 // An Entity is composed of an array of Polygons
 func generateEntity(i *image.RGBA) (entity Entity) {
 	polygon_array := make([]Polygon, number_of_polygons)
-
 	for k := 0; k < number_of_polygons; k++ {
 		polygon_array[k] = generatePolygon(i.Rect.Dx(), i.Rect.Dy())
-
 	}
 
 	entity_image := display(i.Rect.Dx(), i.Rect.Dy(), polygon_array)
@@ -162,9 +112,7 @@ func generateEntity(i *image.RGBA) (entity Entity) {
 		Fitness:  0,
 		DNA:      entity_image,
 	}
-
 	entity.calculateFitness(i)
-
 	return
 }
 
@@ -249,24 +197,25 @@ func crossover(parentA Entity, parentB Entity) (child Entity) {
 	}
 
 	// 50% chance to come from either parent
-	/*
-			for i := 0; i < len(parentA.Polygons); i++ {
-		//		chance := rand.Intn(100)
-				if chance > 50 {
-					child.Polygons[i] = parentB.Polygons[i]
-				} else {
-					child.Polygons[i] = parentA.Polygons[i]
-				}
-			}
-	*/
-	midpoint := rand.Intn(len(parentA.Polygons))
+	chance := rand.Intn(100)
 	for i := 0; i < len(parentA.Polygons); i++ {
-		if i > midpoint {
-			child.Polygons[i] = parentA.Polygons[i]
-		} else {
+		//		chance := rand.Intn(100)
+		if chance > 50 {
 			child.Polygons[i] = parentB.Polygons[i]
+		} else {
+			child.Polygons[i] = parentA.Polygons[i]
 		}
 	}
+	/*
+		midpoint := rand.Intn(len(parentA.Polygons))
+		for i := 0; i < len(parentA.Polygons); i++ {
+			if i > midpoint {
+				child.Polygons[i] = parentA.Polygons[i]
+			} else {
+				child.Polygons[i] = parentB.Polygons[i]
+			}
+		}
+	*/
 
 	child.DNA = display(parentA.DNA.Rect.Dx(), parentA.DNA.Rect.Dy(), child.Polygons)
 	return
@@ -328,9 +277,10 @@ func main() {
 			prev_best = best
 
 			time_taken := time.Since(start)
-			if generation%100 == 0 {
+			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+			if generation%10 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
-				saveImg("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
 		}
 	}
