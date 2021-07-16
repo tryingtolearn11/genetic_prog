@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-var number_of_polygons = 250
+var number_of_polygons = 150
 var mutationRate = 0.01
-var PopulationSize = 50
-var Poolsize = 25
+var PopulationSize = 10
+var Poolsize = 4
 
 /*
 // where to save generated image
@@ -69,8 +69,10 @@ func generatePolygon(width int, height int) (polygon Polygon) {
 	b := float64(rand.Intn(255))
 	a := float64(rand.Intn(255))
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
-	p3 := Point{X: p1.X + (rand.Intn(80) - 15), Y: p1.Y + (rand.Intn(80) - 15)}
+	//	p2 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
+	//	p3 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
+	p2 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
+	p3 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
 	polygon = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
@@ -154,6 +156,10 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 	sort.SliceStable(population, func(i, j int) bool {
 		return population[i].Fitness < population[j].Fitness
 	})
+
+	if Poolsize > PopulationSize {
+		Poolsize = PopulationSize - 1
+	}
 	top := population[0 : Poolsize+1]
 	if top[len(top)-1].Fitness-top[0].Fitness == 0 {
 		pool = population
@@ -247,8 +253,6 @@ func main() {
 	start := time.Now()
 	fmt.Println("Running evolve_pictures")
 	match := false
-	//img := loadImg("./test_imgs/resized_clown.png")
-	//img := loadImg("./test_imgs/monaimage.png")
 	img := loadImg("./test_imgs/mona1.png")
 
 	test_img := generateEntity(img)
@@ -278,7 +282,7 @@ func main() {
 
 			time_taken := time.Since(start)
 			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-			if generation%10 == 0 {
+			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
