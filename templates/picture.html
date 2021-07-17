@@ -7,7 +7,7 @@
         <title> Document </title>
         <script type="text/JavaScript">
             var url = 'static/pictures/fogbranch.png';
-            var refreshInterval = 1000;
+            var refreshInterval = 500;
             var drawDate = true;
             var img;
             var canvasWidth = 250;
@@ -23,6 +23,7 @@
                     //context.drawImage(this, 0, 0);
                     context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
                         canvas.width, canvas.height);
+
                     if(drawDate) {
                         var now = new Date();
                         //var maxWidth = 100;
@@ -38,10 +39,20 @@
                 setTimeout("refresh()", refreshInterval);
             }
 
+           
+
+            function data() {
+                document.getElementById("output").innerHTML = " Time : " + {{.Time}} + " " + 
+                    {{.Fitness}} + " " + {{.Peak}} + " " + {{.SizePool}} 
+                    + " " + {{.Generation}} + " " + {{.Population}};
+            }
+
         </script>
 
         <img src='static/pictures/mona1.png' width=250px height=350px>
+        <div id ="output"></div>
     </head>
+
     <body onload="JavaScript:init();" >
         <canvas id="canvas"/>
         <form

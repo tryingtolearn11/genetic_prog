@@ -1,21 +1,24 @@
-//package evolve
-package main
+package evolve
+
+//package main
 
 import (
 	"fmt"
 	"github.com/fogleman/gg"
+	"html/template"
 	"image"
 	"math"
 	"math/rand"
-	"os"
+	"net/http"
+	//	"os"
 	"sort"
 	"time"
 )
 
-var number_of_polygons = 150
-var mutationRate = 0.01
-var PopulationSize = 10
-var Poolsize = 4
+var number_of_polygons = 50
+var mutationRate = 0.1
+var PopulationSize = 50
+var Poolsize = 15
 
 /*
 // where to save generated image
@@ -28,7 +31,6 @@ func saveImg(filePath string, rgba *image.RGBA) {
 	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
 
-*/
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -45,6 +47,7 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
+*/
 type Point struct {
 	X int
 	Y int
@@ -65,7 +68,6 @@ type Entity struct {
 }
 
 // Output data
-/*
 type Data struct {
 	Time        string
 	Fitness     int64
@@ -75,8 +77,6 @@ type Data struct {
 	SizePool    int
 	ResultImage *image.RGBA
 }
-
-*/
 
 func generatePolygon(width int, height int) (polygon Polygon) {
 	r := float64(rand.Intn(255))
@@ -263,7 +263,6 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
-/*
 func StartEvolution(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -315,8 +314,8 @@ func StartEvolution(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	}
 
 }
-*/
 
+/*
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -354,9 +353,10 @@ func main() {
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
-				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+				//		gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
 		}
 	}
 
 }
+*/

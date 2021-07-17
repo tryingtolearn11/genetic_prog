@@ -2,8 +2,14 @@
 <html>
     <head>
         <meta charset="UTF-8"/>
+    <script type="text/Javascript">
+        document.getElementById("output").innerHTML = "Generations : " +
+    {{.Total_generations}} + "| Best Phrase : " + {{.Ophrase}} + "| Match Rate : " +
+    {{.Best_match}};
+    </script>
+        
     </head>
     <body>
-        <h4>Generations : {{.Total_generations}} | Phrase: {{.Ophrase}} | Match : {{.Best_match}}</h4>
+        <div id="output"></div>
     </body>
 </html>

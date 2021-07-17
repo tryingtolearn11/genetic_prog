@@ -163,6 +163,7 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 		s := m[:len(m)-1]
 	*/
 
+	data := Output{Ophrase: "", Best_match: "", Total_generations: ""}
 	population := createPopulation(s)
 	for !match {
 
@@ -170,7 +171,7 @@ func Run_phrase(w http.ResponseWriter, r *http.Request, s []byte) {
 		gen++
 		// formatting output into template
 		match_rate := fmt.Sprintf("%f", best.Fitness)
-		data := Output{Ophrase: string(best.Phrase), Best_match: match_rate, Total_generations: fmt.Sprintf("%d", gen)}
+		data = Output{Ophrase: string(best.Phrase), Best_match: match_rate, Total_generations: fmt.Sprintf("%d", gen)}
 		t, err := template.ParseFiles("templates/basictemplate.html")
 		t.Execute(w, data)
 		if err != nil {
