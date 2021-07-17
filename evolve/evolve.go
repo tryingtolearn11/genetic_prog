@@ -15,10 +15,10 @@ import (
 	"time"
 )
 
-var number_of_polygons = 50
-var mutationRate = 0.1
-var PopulationSize = 50
-var Poolsize = 15
+var number_of_polygons = 100
+var mutationRate = 0.01
+var PopulationSize = 20
+var Poolsize = 7
 
 /*
 // where to save generated image
@@ -69,13 +69,12 @@ type Entity struct {
 
 // Output data
 type Data struct {
-	Time        string
-	Fitness     int64
-	Peak        int64
-	Population  int
-	Generation  int
-	SizePool    int
-	ResultImage *image.RGBA
+	Time       string
+	Fitness    string
+	Peak       string
+	Population string
+	Generation string
+	SizePool   string
 }
 
 func generatePolygon(width int, height int) (polygon Polygon) {
@@ -279,7 +278,7 @@ func StartEvolution(w http.ResponseWriter, r *http.Request) {
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
 
-	data := Data{Time: "0", Fitness: 0, Peak: 0, SizePool: Poolsize, Generation: generation, Population: PopulationSize}
+	data := Data{Time: "0", Fitness: "", Peak: "", SizePool: string(Poolsize), Generation: string(generation), Population: string(PopulationSize)}
 	for !match {
 		generation++
 		best := successor(population)
@@ -296,19 +295,20 @@ func StartEvolution(w http.ResponseWriter, r *http.Request) {
 			// store the best fitness before looping
 			prev_best = best
 			time_taken := time.Since(start)
-			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			// Output Data
-			data = Data{Time: string(time_taken), Fitness: best.Fitness, Peak: peakEntity.Fitness, SizePool: Poolsize, Generation: generation, Population: PopulationSize}
+			data = Data{Time: string(time_taken), Fitness: string(best.Fitness), Peak: string(peakEntity.Fitness), SizePool: string(Poolsize),
+				Generation: string(generation), Population: string(PopulationSize)}
 			t, err := template.ParseFiles("templates/picture.html")
 			t.Execute(w, data)
 			if err != nil {
 				panic(err)
 			}
 
+			gg.SavePNG("../static/pictures/"+"fog.png", peakEntity.DNA)
 			// Save Points
-			if generation%100 == 0 {
+			if generation%50 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
-				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+				gg.SavePNG("../static/pictures/"+"fog.png", peakEntity.DNA)
 				match = true
 			}
 		}

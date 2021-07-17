@@ -1,18 +1,12 @@
 <html>
     <head>
         <h2>PICTURE PART TWO</h2>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie-edge" />
-        <title> Document </title>
+        <title>Image Evolution</title>
         <script type="text/JavaScript">
-                function data() {
-                    document.getElementById("output").innerHTML = " Time : " + {{.Time}} + " " + 
-                        {{.Fitness}} + " " + {{.Peak}} + " " + {{.SizePool}} 
-                        + " " + {{.Generation}} + " " + {{.Population}}; }
-        </script>
-        <script type="text/JavaScript">
-            var url = 'static/pictures/fogbranch.png';
+            document.getElementById("info").innerHTML = "Generations : " +
+        {{.Generation}} + "| Best : " + {{.Fitness}} + "| Match Rate : " +
+        {{.Peak}} + {{.SizePool}};
+            var url = 'static/pictures/fog.png';
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
@@ -44,16 +38,9 @@
                 img.src = url + "?t=" + new Date().getTime();
                 setTimeout("refresh()", refreshInterval);
             }
-
-           
-
-
         </script>
     </head>
-        <div id ="output"/>
-        <img src='static/pictures/mona1.png' width=250px height=350px>
-        <img src='static/pictures/fogbranch.png' width=250px height=350px>
-        <canvas id="canvas"/>
+    <body>
         <form
             enctype="multipart/form-data"
             action="http://localhost:5000/upload"
@@ -62,6 +49,10 @@
             <input type="file" name="myFile" />
             <input type="submit" value="upload" />
         </form>
+        <div id="info"></div>
+        <img src='static/pictures/mona1.png' width=250px height=350px>
+        <script>init();</script> 
+        <canvas id="canvas"/>
 
     </body>
 </html>
