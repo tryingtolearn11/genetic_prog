@@ -5,10 +5,45 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie-edge" />
         <title> Document </title>
+        <script type="text/JavaScript">
+            var url = 'static/pictures/fogbranch.png';
+            var refreshInterval = 1000;
+            var drawDate = true;
+            var img;
+            var canvasWidth = 250;
+            var canvasHeight = 350;
+            
+            function init() {
+                var canvas = document.getElementById("canvas");
+                var context = canvas.getContext("2d");
+                img = new Image()
+                img.onload = function() {
+                    canvas.setAttribute("width", canvasWidth);
+                    canvas.setAttribute("height", canvasHeight);
+                    //context.drawImage(this, 0, 0);
+                    context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
+                        canvas.width, canvas.height);
+                    if(drawDate) {
+                        var now = new Date();
+                        //var maxWidth = 100;
+                        //var x = img.width-10-maxWidth;
+                        //var y = img.height-10;
+                        //context.lineWidth = 2;
+                    }
+                };
+                refresh();
+            }
+            function refresh() {
+                img.src = url + "?t=" + new Date().getTime();
+                setTimeout("refresh()", refreshInterval);
+            }
+
+        </script>
+
+        <img src='static/pictures/mona1.png' width=250px height=350px>
     </head>
-    <body>
-        <img src='static/pictures/monaimage.png' width=80px height=100px>
-        <img src='static/pictures/dna.png' width=80px height=100px> 
+    <body onload="JavaScript:init();" >
+        <canvas id="canvas"/>
         <form
             enctype="multipart/form-data"
             action="http://localhost:5000/upload"
@@ -17,5 +52,6 @@
             <input type="file" name="myFile" />
             <input type="submit" value="upload" />
         </form>
+
     </body>
 </html>

@@ -2,12 +2,32 @@ package main
 
 import (
 	"fmt"
+	//"ga/vistwitch/evolve"
 	"ga/vistwitch/monkey"
 	"html/template"
+	//	"image"
 	"io/ioutil"
 	"log"
 	"net/http"
+	//	"os"
 )
+
+/*
+// load the parent image
+func loadImg(filePath string) *image.RGBA {
+	img, err := os.Open(filePath)
+	defer img.Close()
+	if err != nil {
+		fmt.Println("Error reading File")
+	}
+
+	pic, _, err := image.Decode(img)
+	if err != nil {
+		fmt.Println("err decoding file")
+	}
+	return pic.(*image.RGBA)
+}
+*/
 
 // templates
 var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
@@ -18,6 +38,10 @@ func input_picture(w http.ResponseWriter, r *http.Request) {
 	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	//	img := loadImg("./evolve/test_imgs/mona1.png")
+	//	evolve.StartEvolution(w, r, img)
+
 }
 
 // part one : Monkey

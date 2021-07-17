@@ -1,10 +1,10 @@
+//package evolve
 package main
 
 import (
 	"fmt"
 	"github.com/fogleman/gg"
 	"image"
-	//	"image/png"
 	"math"
 	"math/rand"
 	"os"
@@ -27,6 +27,7 @@ func saveImg(filePath string, rgba *image.RGBA) {
 	}
 	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
+
 */
 
 // load the parent image
@@ -62,6 +63,20 @@ type Entity struct {
 	Fitness  int64
 	DNA      *image.RGBA
 }
+
+// Output data
+/*
+type Data struct {
+	Time        string
+	Fitness     int64
+	Peak        int64
+	Population  int
+	Generation  int
+	SizePool    int
+	ResultImage *image.RGBA
+}
+
+*/
 
 func generatePolygon(width int, height int) (polygon Polygon) {
 	r := float64(rand.Intn(255))
@@ -248,6 +263,60 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
+/*
+func StartEvolution(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
+	rand.Seed(time.Now().UTC().UnixNano())
+	start := time.Now()
+	fmt.Println("Running evolve_pictures")
+	match := false
+	//	img := loadImg("./test_imgs/mona1.png")
+
+	test_img := generateEntity(img)
+	population := generatePopulation(test_img.DNA)
+	generation := 0
+	// keeping track of the previous gen
+	//prev_population := population
+	prev_best := test_img
+	peakEntity := test_img
+	prev_best.Fitness = int64(9999999)
+
+	data := Data{Time: "0", Fitness: 0, Peak: 0, SizePool: Poolsize, Generation: generation, Population: PopulationSize}
+	for !match {
+		generation++
+		best := successor(population)
+		// tracking the peak fitness
+		if best.Fitness < peakEntity.Fitness {
+			peakEntity = best
+		}
+
+		if best.Fitness < 20 {
+			match = true
+		} else {
+			pool := generateMatingPool(population, img)
+			population = generateNextGeneration(pool, population, img)
+			// store the best fitness before looping
+			prev_best = best
+			time_taken := time.Since(start)
+			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+			// Output Data
+			data = Data{Time: string(time_taken), Fitness: best.Fitness, Peak: peakEntity.Fitness, SizePool: Poolsize, Generation: generation, Population: PopulationSize}
+			t, err := template.ParseFiles("templates/picture.html")
+			t.Execute(w, data)
+			if err != nil {
+				panic(err)
+			}
+
+			// Save Points
+			if generation%100 == 0 {
+				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
+				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+			}
+		}
+	}
+
+}
+*/
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -279,9 +348,10 @@ func main() {
 			population = generateNextGeneration(pool, population, img)
 			// store the best fitness before looping
 			prev_best = best
-
 			time_taken := time.Since(start)
 			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+
+			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
