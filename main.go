@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"ga/vistwitch/evolve"
 	"ga/vistwitch/monkey"
@@ -10,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // load the parent image
@@ -31,15 +33,32 @@ func loadImg(filePath string) *image.RGBA {
 var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
 var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
 
+func beginEvolution(w http.ResponseWriter, r *http.Request, begin bool) {
+	if begin {
+		evolve.StartEvolution(w, r)
+	}
+}
+
 // part two
 func input_picture(w http.ResponseWriter, r *http.Request) {
+	begin := false
+	reader := bufio.NewReader(os.Stdin)
 	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	img := loadImg("./evolve/test_imgs/mona1.png")
-	evolve.StartEvolution(w, r, img)
-
+	//img := loadImg("./evolve/test_imgs/mona1.png")
+	//evolve.runEvolution(w, r)
+	fmt.Print("Please enter 'yes' or 'no': ")
+	text, _ := reader.ReadString('\n')
+	if strings.TrimRight(text, "\n") == "yes" {
+		// Run the genetic program
+		begin = true
+		fmt.Println("Program will begin ")
+		beginEvolution(w, r, begin)
+	} else {
+		fmt.Fprintf(w, "You chose No")
+	}
 }
 
 // part one : Monkey

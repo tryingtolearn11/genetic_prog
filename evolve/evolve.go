@@ -10,7 +10,7 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
-	//	"os"
+	"os"
 	"sort"
 	"time"
 )
@@ -31,6 +31,7 @@ func saveImg(filePath string, rgba *image.RGBA) {
 	png.Encode(img, rgba.SubImage(rgba.Rect))
 }
 
+*/
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -47,7 +48,6 @@ func loadImg(filePath string) *image.RGBA {
 	return pic.(*image.RGBA)
 }
 
-*/
 type Point struct {
 	X int
 	Y int
@@ -263,12 +263,12 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
-func StartEvolution(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
+func StartEvolution(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
 	fmt.Println("Running evolve_pictures")
 	match := false
-	//	img := loadImg("./test_imgs/mona1.png")
+	img := loadImg("./evolve/test_imgs/mona1.png")
 
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
@@ -309,6 +309,7 @@ func StartEvolution(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			if generation%100 == 0 {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+				match = true
 			}
 		}
 	}
