@@ -1,44 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"ga/vistwitch/evolve"
 	"ga/vistwitch/monkey"
 	"html/template"
-	"image"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 )
 
-// load the parent image
-func loadImg(filePath string) *image.RGBA {
-	img, err := os.Open(filePath)
-	defer img.Close()
-	if err != nil {
-		fmt.Println("Error reading File")
-	}
-
-	pic, _, err := image.Decode(img)
-	if err != nil {
-		fmt.Println("err decoding file")
-	}
-	return pic.(*image.RGBA)
-}
-
-// templates
-var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
-var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
-
-func beginEvolution(w http.ResponseWriter, r *http.Request, begin bool) {
-	if begin {
-		evolve.StartEvolution(w, r)
-	}
-}
-
+/*
 // part two
 func input_picture(w http.ResponseWriter, r *http.Request) {
 	begin := false
@@ -58,6 +29,33 @@ func input_picture(w http.ResponseWriter, r *http.Request) {
 		beginEvolution(w, r, begin)
 	} else {
 		fmt.Fprintf(w, "You chose No")
+	}
+}
+
+// load the parent image
+func loadImg(filePath string) *image.RGBA {
+	img, err := os.Open(filePath)
+	defer img.Close()
+	if err != nil {
+		fmt.Println("Error reading File")
+	}
+
+	pic, _, err := image.Decode(img)
+	if err != nil {
+		fmt.Println("err decoding file")
+	}
+	return pic.(*image.RGBA)
+}
+*/
+
+// templates
+var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
+var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
+
+// part two
+func input_picture(w http.ResponseWriter, r *http.Request) {
+	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

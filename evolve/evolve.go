@@ -1,15 +1,13 @@
-package evolve
+//package evolve
 
-//package main
+package main
 
 import (
 	"fmt"
 	"github.com/fogleman/gg"
-	"html/template"
 	"image"
 	"math"
 	"math/rand"
-	"net/http"
 	"os"
 	"sort"
 	"time"
@@ -262,6 +260,52 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
+func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+	start := time.Now()
+	fmt.Println("Running evolve_pictures")
+	match := false
+	img := loadImg("./test_imgs/mona1.png")
+
+	test_img := generateEntity(img)
+	population := generatePopulation(test_img.DNA)
+	generation := 0
+	// keeping track of the previous gen
+	//prev_population := population
+	prev_best := test_img
+	peakEntity := test_img
+	prev_best.Fitness = int64(9999999)
+
+	for !match {
+		generation++
+		best := successor(population)
+		// tracking the peak fitness
+		if best.Fitness < peakEntity.Fitness {
+			peakEntity = best
+		}
+
+		if best.Fitness < 20 {
+			match = true
+		} else {
+			pool := generateMatingPool(population, img)
+			population = generateNextGeneration(pool, population, img)
+			// store the best fitness before looping
+			prev_best = best
+			time_taken := time.Since(start)
+			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+
+			// Save Points
+			if generation%100 == 0 {
+				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
+				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+			}
+		}
+	}
+
+}
+
+/*
+
 func StartEvolution(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -310,51 +354,6 @@ func StartEvolution(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fog.png", peakEntity.DNA)
 				match = true
-			}
-		}
-	}
-
-}
-
-/*
-func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
-	start := time.Now()
-	fmt.Println("Running evolve_pictures")
-	match := false
-	img := loadImg("./test_imgs/mona1.png")
-
-	test_img := generateEntity(img)
-	population := generatePopulation(test_img.DNA)
-	generation := 0
-	// keeping track of the previous gen
-	//prev_population := population
-	prev_best := test_img
-	peakEntity := test_img
-	prev_best.Fitness = int64(9999999)
-
-	for !match {
-		generation++
-		best := successor(population)
-		// tracking the peak fitness
-		if best.Fitness < peakEntity.Fitness {
-			peakEntity = best
-		}
-
-		if best.Fitness < 20 {
-			match = true
-		} else {
-			pool := generateMatingPool(population, img)
-			population = generateNextGeneration(pool, population, img)
-			// store the best fitness before looping
-			prev_best = best
-			time_taken := time.Since(start)
-			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-
-			// Save Points
-			if generation%100 == 0 {
-				fmt.Printf("\nTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
-				//		gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
 		}
 	}

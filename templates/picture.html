@@ -6,7 +6,9 @@
             document.getElementById("info").innerHTML = "Generations : " +
         {{.Generation}} + "| Best : " + {{.Fitness}} + "| Match Rate : " +
         {{.Peak}} + {{.SizePool}};
-            var url = 'static/pictures/fog.png';
+        </script>
+        <script type="text/JavaScript">
+            var url = 'static/pictures/fogbranch.png';
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
@@ -40,7 +42,11 @@
             }
         </script>
     </head>
-    <body>
+
+    <div id="info"></div>
+    <img src='static/pictures/mona1.png' width=250px height=350px>
+    <body onload="JavaScript:init();">
+        <canvas id="canvas"/>
         <form
             enctype="multipart/form-data"
             action="http://localhost:5000/upload"
@@ -49,10 +55,5 @@
             <input type="file" name="myFile" />
             <input type="submit" value="upload" />
         </form>
-        <div id="info"></div>
-        <img src='static/pictures/mona1.png' width=250px height=350px>
-        <script>init();</script> 
-        <canvas id="canvas"/>
-
     </body>
 </html>
