@@ -9,45 +9,6 @@ import (
 	"net/http"
 )
 
-/*
-// part two
-func input_picture(w http.ResponseWriter, r *http.Request) {
-	begin := false
-	reader := bufio.NewReader(os.Stdin)
-	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	//img := loadImg("./evolve/test_imgs/mona1.png")
-	//evolve.runEvolution(w, r)
-	fmt.Print("Please enter 'yes' or 'no': ")
-	text, _ := reader.ReadString('\n')
-	if strings.TrimRight(text, "\n") == "yes" {
-		// Run the genetic program
-		begin = true
-		fmt.Println("Program will begin ")
-		beginEvolution(w, r, begin)
-	} else {
-		fmt.Fprintf(w, "You chose No")
-	}
-}
-
-// load the parent image
-func loadImg(filePath string) *image.RGBA {
-	img, err := os.Open(filePath)
-	defer img.Close()
-	if err != nil {
-		fmt.Println("Error reading File")
-	}
-
-	pic, _, err := image.Decode(img)
-	if err != nil {
-		fmt.Println("err decoding file")
-	}
-	return pic.(*image.RGBA)
-}
-*/
-
 // templates
 var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
 var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))

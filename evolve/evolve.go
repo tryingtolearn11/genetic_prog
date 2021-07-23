@@ -13,23 +13,10 @@ import (
 	"time"
 )
 
-var number_of_polygons = 100
+var number_of_polygons = 50
 var mutationRate = 0.01
-var PopulationSize = 20
-var Poolsize = 7
-
-/*
-// where to save generated image
-func saveImg(filePath string, rgba *image.RGBA) {
-	img, err := os.Create(filePath)
-	defer img.Close()
-	if err != nil {
-		fmt.Println("Err creating File", err)
-	}
-	png.Encode(img, rgba.SubImage(rgba.Rect))
-}
-
-*/
+var PopulationSize = 50
+var Poolsize = 10
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -81,10 +68,10 @@ func generatePolygon(width int, height int) (polygon Polygon) {
 	b := float64(rand.Intn(255))
 	a := float64(rand.Intn(255))
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	//	p2 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
-	//	p3 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
 	p2 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
 	p3 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
+	//	p2 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
+	//	p3 := Point{X: p1.X + (rand.Intn(100) - 5), Y: p1.Y + (rand.Intn(100) - 5)}
 	polygon = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
@@ -180,7 +167,6 @@ func generateMatingPool(population []Entity, t *image.RGBA) (pool []Entity) {
 
 	for i := 0; i < len(top)-1; i++ {
 		num := int((top[Poolsize].Fitness - top[i].Fitness))
-		//fmt.Println("number of times added : ", num)
 		for n := 0; n < num; n++ {
 			pool = append(pool, top[i])
 		}
@@ -270,8 +256,6 @@ func main() {
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
 	generation := 0
-	// keeping track of the previous gen
-	//prev_population := population
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
@@ -296,7 +280,7 @@ func main() {
 
 			// Save Points
 			if generation%100 == 0 {
-				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
+				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 			}
 		}
