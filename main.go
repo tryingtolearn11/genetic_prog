@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	//	"ga/vistwitch/evolve"
+	"ga/vistwitch/evolve"
 	"ga/vistwitch/monkey"
 	"html/template"
 	"image"
@@ -36,8 +36,8 @@ func input_picture(w http.ResponseWriter, r *http.Request) {
 	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	//	img := loadImg("evolve/test_imgs/mona1.png")
-	//	evolve.RunImage(w, r, img)
+	img := loadImg("evolve/test_imgs/mona1.png")
+	evolve.Run(w, r, img)
 }
 
 // part one : Monkey

@@ -1,6 +1,6 @@
-//package evolve
+package evolve
 
-package main
+//package main
 
 import (
 	"fmt"
@@ -250,21 +250,23 @@ func successor(p []Entity) (e Entity) {
 
 func sendData(w http.ResponseWriter, r *http.Request) {
 	// Organizes Stats To Display
-	t, err := template.ParseFiles("templates/picture.html")
+	var t = template.Must(template.ParseFiles("templates/picture.html"))
 	t.Execute(w, data)
-	if err != nil {
-		panic(err)
-	}
 }
 
 var data Data
 
-func main() {
+//var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("../templates/picture.html"))
+
+func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
+	//	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
+	//		http.Error(w, err.Error(), http.StatusInternalServerError)
+	//	}
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
 	fmt.Println("Running evolve_pictures")
 	match := false
-	img := loadImg("./test_imgs/mona1.png")
+	//	img := loadImg("./test_imgs/mona1.png")
 
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
@@ -272,9 +274,6 @@ func main() {
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
-	mux := http.NewServeMux()
-	mux.HandleFunc("/picture", sendData)
-	http.ListenAndServe(":5000", nil)
 
 	for !match {
 
@@ -301,7 +300,8 @@ func main() {
 			data.Generation = fmt.Sprint(generation)
 			data.Population = fmt.Sprint(PopulationSize)
 			data.SizePool = fmt.Sprint(Poolsize)
-
+			t := template.Must(template.ParseFiles("/templates/picture.html"))
+			t.Execute(w, data)
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
