@@ -3,17 +3,17 @@
         <h2>PICTURE PART TWO</h2>
         <title>Image Evolution</title>
         <script type="text/JavaScript">
-            document.getElementById("info").innerHTML = "Generations : " +
-        {{.Generation}} + "| Best : " + {{.Fitness}} + "| Match Rate : " +
-        {{.Peak}} + {{.SizePool}};
-        </script>
-        <script type="text/JavaScript">
             var url = 'static/pictures/fogbranch.png';
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
             var canvasWidth = 250;
             var canvasHeight = 350;
+            
+            function start() {
+                init();
+                myData();
+            }
             
             function init() {
                 var canvas = document.getElementById("canvas");
@@ -40,14 +40,20 @@
                 img.src = url + "?t=" + new Date().getTime();
                 setTimeout("refresh()", refreshInterval);
             }
+
+            function myData() {
+            document.getElementById("stats").innerHTML = "Generations : " +
+        {{.Generation}} + "| Best : " + {{.Fitness}} + "| Match Rate : " +
+                    {{.Peak}} + " | Pool Size : " + {{.SizePool}} + "| Time :"
+                    + {{.Time}} + "| Population : " + {{.Population}};
+            }
         </script>
 
     </head>
-    <div id="info"></div>
-    <img src='static/pictures/mona1.png' width=250px height=350px
-         class="centerImage">
-    <body onload="JavaScript:init();">
-        <canvas id="canvas"/>
+
+    <img src='static/pictures/mona1.png' width=250px height=350px>
+    <body onload="JavaScript:start();">
+        <canvas id="canvas" id="stats"/>
         <form
             enctype="multipart/form-data"
             action="http://localhost:5000/upload"

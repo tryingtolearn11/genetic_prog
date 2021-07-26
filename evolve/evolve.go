@@ -8,8 +8,10 @@ import (
 	"image"
 	"math"
 	"math/rand"
+	"net/http"
 	"os"
 	"sort"
+	"text/template"
 	"time"
 )
 
@@ -246,6 +248,17 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
+func sendData(w http.ResponseWriter, r *http.Request) {
+	// Organizes Stats To Display
+	t, err := template.ParseFiles("templates/picture.html")
+	t.Execute(w, data)
+	if err != nil {
+		panic(err)
+	}
+}
+
+var data Data
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -259,6 +272,9 @@ func main() {
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
+
+	//http.HandleFunc("/picture", sendData)
+	http.HandleFunc("/picture", sendData)
 
 	for !match {
 		generation++
@@ -278,10 +294,18 @@ func main() {
 			time_taken := time.Since(start)
 			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 
+			data.Time = fmt.Sprint(time_taken)
+			data.Fitness = fmt.Sprint(best.Fitness)
+			data.Peak = fmt.Sprint(peakEntity.Fitness)
+			data.Generation = fmt.Sprint(generation)
+			data.Population = fmt.Sprint(PopulationSize)
+			data.SizePool = fmt.Sprint(Poolsize)
+
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
+				//fmt.Printf("\r\nStats : %s", data)
 			}
 		}
 	}
