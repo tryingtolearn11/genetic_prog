@@ -262,21 +262,17 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
+	d := Data{}
 
 	for !match {
-		data := Data{}
 		generation++
 		best := successor(population)
-		t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/picture.html")
-		t.Execute(w, data)
-		if err != nil {
-			panic(err)
-		}
 		// tracking the peak fitness
 		if best.Fitness < peakEntity.Fitness {
 			peakEntity = best
 		}
 
+		//t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/test.html")
 		if best.Fitness < 20 {
 			match = true
 		} else {
@@ -287,18 +283,18 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			time_taken := time.Since(start)
 			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 
-			data.Time = fmt.Sprint(time_taken)
-			data.Fitness = fmt.Sprint(best.Fitness)
-			data.Peak = fmt.Sprint(peakEntity.Fitness)
-			data.Generation = fmt.Sprint(generation)
-			data.Population = fmt.Sprint(PopulationSize)
-			data.SizePool = fmt.Sprint(Poolsize)
-
+			d = Data{Time: fmt.Sprint(time_taken), Fitness: fmt.Sprint(best.Fitness), Peak: fmt.Sprint(peakEntity.Fitness), Generation: fmt.Sprint(generation),
+				Population: fmt.Sprint(PopulationSize), SizePool: fmt.Sprint(Poolsize)}
+			t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/picture.html")
+			t.Execute(w, d)
+			if err != nil {
+				panic(err)
+			}
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				fmt.Println("\nStats : ", data)
+				fmt.Println("\nStats : ", d)
 			}
 		}
 	}

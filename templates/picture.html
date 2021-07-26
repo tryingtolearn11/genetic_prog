@@ -1,6 +1,5 @@
 <html>
     <head>
-        <h2>PICTURE PART TWO</h2>
         <title>Image Evolution</title>
         <script type="text/JavaScript">
             var url = 'static/pictures/fogbranch.png';
@@ -20,7 +19,8 @@
                     canvas.setAttribute("height", canvasHeight);
                     //context.drawImage(this, 0, 0);
 
-                    context.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350)
+                    context.drawImage(this, 0, 0, img.width, img.height, 0, 0,
+                        250, 350);
                     //context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
                     //    canvas.width, canvas.height);
 
@@ -33,7 +33,7 @@
                     context.fillText("Peak : " + {{.Peak}}, 300, 160);
                     context.fillText("Population : " + {{.Population}}, 300, 200);
                     context.fillText("Pool Size: " + {{.SizePool}}, 300, 240);
-                    context.drawImage({{.Image}})
+                    context.drawImage({{.Image}});
 
                     if(drawDate) {
                         var now = new Date();
@@ -53,23 +53,11 @@
         </script>
 
    
-        <h4>Generations :  {{.Generation}} | Best :  {{.Fitness}}  | Match Rate :   {{.Peak}} </h4>
 
     </head>
 
-        <div id="out"></div>
-    <img src='static/pictures/mona1.png' width=250px height=350px>
-    <body>
+    <body> 
         <script>JavaScript:init();</script>
-        <canvas id="canvas" style="border: 1px solid black;" width=650px height=350px>
-        </canvas>
-        <form
-            enctype="multipart/form-data"
-            action="http://localhost:5000/upload"
-            method="post"
-            >
-            <input type="file" name="myFile" />
-            <input type="submit" value="upload" />
-        </form>
+        <canvas id="canvas" style="border: 1px solid black;"></canvas>
     </body>
 </html>
