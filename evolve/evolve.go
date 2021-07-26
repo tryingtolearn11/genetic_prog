@@ -272,11 +272,12 @@ func main() {
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
-
-	//http.HandleFunc("/picture", sendData)
-	http.HandleFunc("/picture", sendData)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/picture", sendData)
+	http.ListenAndServe(":5000", nil)
 
 	for !match {
+
 		generation++
 		best := successor(population)
 		// tracking the peak fitness
@@ -305,7 +306,7 @@ func main() {
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				//fmt.Printf("\r\nStats : %s", data)
+				fmt.Printf("\r\nStats : %s", data)
 			}
 		}
 	}
