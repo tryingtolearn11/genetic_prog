@@ -10,11 +10,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 )
 
 // templates
 var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
 var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
+
+var doOnce sync.Once
+
+func startProgram(w http.ResponseWriter, r *http.Request) {
+	doOnce.Do(func() {
+		fmt.Printf("Run once - 1st Time")
+		img := loadImg("evolve/test_imgs/mona1.png")
+		evolve.Run(w, r, img)
+	})
+}
 
 // load the parent image
 func loadImg(filePath string) *image.RGBA {
@@ -36,8 +47,9 @@ func input_picture(w http.ResponseWriter, r *http.Request) {
 	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	img := loadImg("evolve/test_imgs/mona1.png")
-	evolve.Run(w, r, img)
+	//img := loadImg("evolve/test_imgs/mona1.png")
+	//evolve.Run(w, r, img)
+	startProgram(w, r)
 }
 
 // part one : Monkey

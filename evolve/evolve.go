@@ -62,6 +62,7 @@ type Data struct {
 	Population string
 	Generation string
 	SizePool   string
+	Image      *image.RGBA
 }
 
 func generatePolygon(width int, height int) (polygon Polygon) {
@@ -256,12 +257,7 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 
 var data Data
 
-//var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("../templates/picture.html"))
-
 func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
-	//	if err := picture_tmpl.ExecuteTemplate(w, "picture.html", nil); err != nil {
-	//		http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	}
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
 	fmt.Println("Running evolve_pictures")
@@ -276,7 +272,11 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	prev_best.Fitness = int64(9999999)
 
 	for !match {
-
+		t, err := template.ParseFiles("templates/basictemplate.html")
+		t.Execute(w, data)
+		if err != nil {
+			panic(err)
+		}
 		generation++
 		best := successor(population)
 		// tracking the peak fitness
@@ -300,13 +300,13 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			data.Generation = fmt.Sprint(generation)
 			data.Population = fmt.Sprint(PopulationSize)
 			data.SizePool = fmt.Sprint(Poolsize)
-			t := template.Must(template.ParseFiles("/templates/picture.html"))
-			t.Execute(w, data)
+			data.Image = peakEntity.DNA
+
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				fmt.Printf("\r\nStats : %s", data)
+				//		fmt.Printf("\r\nStats : %s", data)
 			}
 		}
 	}

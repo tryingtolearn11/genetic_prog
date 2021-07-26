@@ -33,6 +33,7 @@
                     context.fillText("Peak : " + {{.Peak}}, 300, 160);
                     context.fillText("Population : " + {{.Population}}, 300, 200);
                     context.fillText("Pool Size: " + {{.SizePool}}, 300, 240);
+                    context.drawImage({{.Image}})
 
                     if(drawDate) {
                         var now = new Date();
@@ -54,8 +55,9 @@
     </head>
 
     <img src='static/pictures/mona1.png' width=250px height=350px>
-    <body onload="JavaScript:init();">
-        <canvas id="canvas" style="border: 1px solid black;">
+    <body>
+        <script>JavaScript:init();</script>
+        <canvas id="canvas" style="border: 1px solid black;" width=650px height=350px>
         </canvas>
         <form
             enctype="multipart/form-data"
