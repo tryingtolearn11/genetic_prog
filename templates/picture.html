@@ -7,14 +7,10 @@
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
-            var canvasWidth = 250;
+            var canvasWidth = 650;
             var canvasHeight = 350;
             
-            function start() {
-                init();
-                myData();
-            }
-            
+
             function init() {
                 var canvas = document.getElementById("canvas");
                 var context = canvas.getContext("2d");
@@ -23,8 +19,20 @@
                     canvas.setAttribute("width", canvasWidth);
                     canvas.setAttribute("height", canvasHeight);
                     //context.drawImage(this, 0, 0);
-                    context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
-                        canvas.width, canvas.height);
+
+                    context.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350)
+                    //context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
+                    //    canvas.width, canvas.height);
+
+
+                    // Data
+                    context.font = "15px Arial";
+                    context.fillText("Time : " + {{.Time}}, 300, 40);
+                    context.fillText("Generations : " + {{.Generation}}, 300, 80);
+                    context.fillText("Best of This Generation : " + {{.Fitness}}, 300, 120);
+                    context.fillText("Peak : " + {{.Peak}}, 300, 160);
+                    context.fillText("Population : " + {{.Population}}, 300, 200);
+                    context.fillText("Pool Size: " + {{.SizePool}}, 300, 240);
 
                     if(drawDate) {
                         var now = new Date();
@@ -52,8 +60,9 @@
     </head>
 
     <img src='static/pictures/mona1.png' width=250px height=350px>
-    <body onload="JavaScript:start();">
-        <canvas id="canvas" id="stats"/>
+    <body onload="JavaScript:init();">
+        <canvas id="canvas" style="border: 1px solid black;">
+        </canvas>
         <form
             enctype="multipart/form-data"
             action="http://localhost:5000/upload"
