@@ -4,7 +4,6 @@ package evolve
 
 import (
 	"fmt"
-	"github.com/fogleman/gg"
 	"image"
 	"math"
 	"math/rand"
@@ -13,6 +12,8 @@ import (
 	"sort"
 	"text/template"
 	"time"
+
+	"github.com/fogleman/gg"
 )
 
 var number_of_polygons = 100
@@ -62,7 +63,6 @@ type Data struct {
 	Population string
 	Generation string
 	SizePool   string
-	Image      *image.RGBA
 }
 
 func generatePolygon(width int, height int) (polygon Polygon) {
@@ -249,14 +249,6 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
-func sendData(w http.ResponseWriter, r *http.Request) {
-	// Organizes Stats To Display
-	var t = template.Must(template.ParseFiles("templates/picture.html"))
-	t.Execute(w, data)
-}
-
-var data Data
-
 func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
@@ -272,13 +264,14 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	prev_best.Fitness = int64(9999999)
 
 	for !match {
-		t, err := template.ParseFiles("templates/basictemplate.html")
+		data := Data{}
+		generation++
+		best := successor(population)
+		t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/picture.html")
 		t.Execute(w, data)
 		if err != nil {
 			panic(err)
 		}
-		generation++
-		best := successor(population)
 		// tracking the peak fitness
 		if best.Fitness < peakEntity.Fitness {
 			peakEntity = best
@@ -300,13 +293,12 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			data.Generation = fmt.Sprint(generation)
 			data.Population = fmt.Sprint(PopulationSize)
 			data.SizePool = fmt.Sprint(Poolsize)
-			data.Image = peakEntity.DNA
 
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				//		fmt.Printf("\r\nStats : %s", data)
+				fmt.Println("\nStats : ", data)
 			}
 		}
 	}
