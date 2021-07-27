@@ -102,15 +102,15 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 
 // Prints the Data to Screen
 func displayData(width int, height int, data Data) {
-	const s = 150
+	const s = 100
 	dc := gg.NewContext(width, height)
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
-	dc.DrawStringAnchored("Generations : "+data.Generation, 50, 25, 0.5, 0.5)
-	dc.DrawStringAnchored("Fitness : "+data.Fitness, 50, 50, 0.5, 0.5)
-	dc.DrawStringAnchored("Peak : "+data.Peak, 50, s/1, 100, 0.5)
-	dc.DrawStringAnchored("Population : "+data.Population, 50, s, 0.5, 0.5)
+	dc.DrawStringAnchored("Generations : "+data.Generation, s/2, s/2, 0.5, 0.5)
+	dc.DrawStringAnchored("Fitness : "+data.Fitness, s/2, s/1, 0.5, 0.5)
+	dc.DrawStringAnchored("Peak : "+data.Peak, s/2, s/1, 0.5, 0.5)
+	dc.DrawStringAnchored("Population : "+data.Population, s/2, s, 0.5, 0.5)
 	dc.SavePNG("../static/pictures/" + "data.png")
 }
 
@@ -296,7 +296,8 @@ func main() {
 
 			d = Data{Time: fmt.Sprint(time_taken), Fitness: fmt.Sprint(best.Fitness), Peak: fmt.Sprint(peakEntity.Fitness), Generation: fmt.Sprint(generation),
 				Population: fmt.Sprint(PopulationSize), SizePool: fmt.Sprint(Poolsize)}
-			displayData(300, 350, d)
+
+			displayData(img.Rect.Dx(), img.Rect.Dy(), d)
 
 			// Save Points
 			if generation%100 == 0 {
