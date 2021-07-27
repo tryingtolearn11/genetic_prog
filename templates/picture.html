@@ -7,9 +7,12 @@
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
-            var canvasWidth = 650;
+            var img2;
+            var canvasWidth = 250
             var canvasHeight = 350;
             
+            var canvasWidth2= 250;
+            var canvasHeight2 = 350;
 
             function init() {
                 var canvas = document.getElementById("canvas");
@@ -19,21 +22,23 @@
                     canvas.setAttribute("width", canvasWidth);
                     canvas.setAttribute("height", canvasHeight);
                     //context.drawImage(this, 0, 0);
-
                     context.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350);
                     //context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-
 
                     if(drawDate) {
                         var now = new Date();
                     }
                 };
 
+                var canvas2 = document.getElementById("canvas2");
+                var context2 = canvas2.getContext("2d");
+
                 img2 = new Image()
                 img2.onload = function() {
-                    canvas.setAttribute("width", canvasWidth);
-                    canvas.setAttribute("height", canvasHeight);
-                    context.drawImage(this, 400, 20)
+                    canvas2.setAttribute("width", canvasWidth2);
+                    canvas2.setAttribute("height", canvasHeight2);
+                    context2.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350);
+                    //context2.drawImage(this, 0, 0)
 
                     if(drawDate) {
                         var now = new Date();
@@ -42,11 +47,14 @@
 
                 refresh();
             }
+
+
             function refresh() {
-                //img.src = url + "?t=" + new Date().getTime();
+                img.src = url + "?t=" + new Date().getTime();
                 img2.src = urlData + "?t=" + new Date().getTime();
                 setTimeout("refresh()", refreshInterval);
             }
+
 
         </script>
 
@@ -57,6 +65,7 @@
     <img src='static/pictures/data.png' width=250px height=350px>
     <body onload="JavaScipt:init();"> 
         <canvas id="canvas" style="border: 1px solid black;"></canvas>
+        <canvas id="canvas2" style="border: 1px solid red;"></canvas>
 
     </body>
 </html>
