@@ -37,8 +37,8 @@
                 img2.onload = function() {
                     canvas2.setAttribute("width", canvasWidth2);
                     canvas2.setAttribute("height", canvasHeight2);
-                    context2.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350);
-                    //context2.drawImage(this, 0, 0)
+                    //context2.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350);
+                    context2.drawImage(this, 0, 0)
 
                     if(drawDate) {
                         var now = new Date();
@@ -62,7 +62,6 @@
 
     </head>
     <img src='static/pictures/mona1.png' width=250px height=350px>
-    <img src='static/pictures/data.png' width=250px height=350px>
     <body onload="JavaScipt:init();"> 
         <canvas id="canvas" style="border: 1px solid black;"></canvas>
         <canvas id="canvas2" style="border: 1px solid red;"></canvas>
