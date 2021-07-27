@@ -3,7 +3,7 @@
         <title>Image Evolution</title>
         <script type="text/JavaScript">
             var url = 'static/pictures/fogbranch.png';
-            //var urlData = 'static/pictures/data.png';
+            var urlData = 'static/pictures/data.png';
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
@@ -15,7 +15,6 @@
                 var canvas = document.getElementById("canvas");
                 var context = canvas.getContext("2d");
                 img = new Image()
-                img2 = new Image()
                 img.onload = function() {
                     canvas.setAttribute("width", canvasWidth);
                     canvas.setAttribute("height", canvasHeight);
@@ -30,10 +29,22 @@
                     }
                 };
 
+                img2 = new Image()
+                img2.onload = function() {
+                    canvas.setAttribute("width", canvasWidth);
+                    canvas.setAttribute("height", canvasHeight);
+                    context.drawImage(this, 400, 20)
+
+                    if(drawDate) {
+                        var now = new Date();
+                    }
+                };
+
                 refresh();
             }
             function refresh() {
-                img.src = url + "?t=" + new Date().getTime();
+                //img.src = url + "?t=" + new Date().getTime();
+                img2.src = urlData + "?t=" + new Date().getTime();
                 setTimeout("refresh()", refreshInterval);
             }
 

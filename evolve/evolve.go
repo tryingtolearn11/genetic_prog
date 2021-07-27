@@ -107,10 +107,11 @@ func displayData(width int, height int, data Data) {
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
-	dc.DrawStringAnchored("Generations : "+data.Generation, 50, 25, 0.5, 0.5)
-	dc.DrawStringAnchored("Fitness : "+data.Fitness, 50, 50, 0.5, 0.5)
-	dc.DrawStringAnchored("Peak : "+data.Peak, 50, s/1, 100, 0.5)
-	dc.DrawStringAnchored("Population : "+data.Population, 50, s, 0.5, 0.5)
+	dc.DrawStringAnchored("Generations : "+data.Generation, 100, 25, 0.5, 0.5)
+	dc.DrawStringAnchored("Fitness : "+data.Fitness, 100, 50, 0.5, 0.5)
+	dc.DrawStringAnchored("Peak : "+data.Peak, 100, 100, 0.5, 0.5)
+	dc.DrawStringAnchored("Population : "+data.Population, 100, 150, 0.5, 0.5)
+	dc.DrawStringAnchored("Time : "+data.Time, 100, 200, 0.5, 0.5)
 	dc.SavePNG("../static/pictures/" + "data.png")
 }
 
