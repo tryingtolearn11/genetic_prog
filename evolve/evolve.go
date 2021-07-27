@@ -298,13 +298,13 @@ func main() {
 
 			d = Data{Time: fmt.Sprint(time_taken), Fitness: fmt.Sprint(best.Fitness), Peak: fmt.Sprint(peakEntity.Fitness), Generation: fmt.Sprint(generation),
 				Population: fmt.Sprint(PopulationSize), SizePool: fmt.Sprint(len(pool))}
-			displayData(250, 350, d)
 
 			// Save Points
-			if generation%100 == 0 {
-				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
+			if generation%10 == 0 {
+				//fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				fmt.Println("\nStats : ", d)
+				displayData(250, 350, d)
+				//fmt.Println("\nStats : ", d)
 			}
 		}
 	}
