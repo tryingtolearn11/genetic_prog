@@ -6,7 +6,7 @@
             var refreshInterval = 1000;
             var drawDate = true;
             var img;
-            var canvasWidth = 650;
+            var canvasWidth = 250;
             var canvasHeight = 350;
             
 
@@ -19,21 +19,19 @@
                     canvas.setAttribute("height", canvasHeight);
                     //context.drawImage(this, 0, 0);
 
-                    context.drawImage(this, 0, 0, img.width, img.height, 0, 0,
-                        250, 350);
-                    //context.drawImage(img, 0, 0, img.width, img.height, 0, 0,
-                    //    canvas.width, canvas.height);
+                    //context.drawImage(this, 0, 0, img.width, img.height, 0, 0, 250, 350);
+                    context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
 
                     // Data
-                    context.font = "15px Arial";
-                    context.fillText("Time : " + {{.Time}}, 300, 40);
-                    context.fillText("Generations : " + {{.Generation}}, 300, 80);
-                    context.fillText("Best of This Generation : " + {{.Fitness}}, 300, 120);
-                    context.fillText("Peak : " + {{.Peak}}, 300, 160);
-                    context.fillText("Population : " + {{.Population}}, 300, 200);
-                    context.fillText("Pool Size: " + {{.SizePool}}, 300, 240);
-                    context.drawImage({{.Image}});
+                    //context.font = "15px Arial";
+                    //context.fillText("Time : " + {{.Time}}, 300, 40);
+                    //context.fillText("Generations : " + {{.Generation}}, 300, 80);
+                    //context.fillText("Best of This Generation : " + {{.Fitness}}, 300, 120);
+                    //context.fillText("Peak : " + {{.Peak}}, 300, 160);
+                    //context.fillText("Population : " + {{.Population}}, 300, 200);
+                    //context.fillText("Pool Size: " + {{.SizePool}}, 300, 240);
+                    //context.drawImage({{.Image}});
 
                     if(drawDate) {
                         var now = new Date();
@@ -55,9 +53,9 @@
    
 
     </head>
-
-    <body> 
-        <script>JavaScript:init();</script>
+    <img src='static/pictures/mona1.png' width=250px height=350px>
+    <body onload="JavaScipt:init();"> 
         <canvas id="canvas" style="border: 1px solid black;"></canvas>
+
     </body>
 </html>

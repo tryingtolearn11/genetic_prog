@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
-	"ga/vistwitch/evolve"
+	//	"ga/vistwitch/evolve"
 	"ga/vistwitch/monkey"
 	"html/template"
-	"image"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"sync"
+	//	"sync"
 )
 
 // templates
 var monkey_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/form.html", "templates/home.html", "templates/basictemplate.html"))
 var picture_tmpl = template.Must(template.New("tmpl").ParseFiles("templates/picture.html"))
 
+/*
+// Concurrency
 var doOnce sync.Once
 
 func startProgram(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +41,7 @@ func loadImg(filePath string) *image.RGBA {
 	}
 	return pic.(*image.RGBA)
 }
+*/
 
 // part two
 func input_picture(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +50,7 @@ func input_picture(w http.ResponseWriter, r *http.Request) {
 	}
 	//img := loadImg("evolve/test_imgs/mona1.png")
 	//evolve.Run(w, r, img)
-	startProgram(w, r)
+	//startProgram(w, r)
 }
 
 // part one : Monkey

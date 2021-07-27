@@ -1,19 +1,16 @@
-package evolve
+//package evolve
 
-//package main
+package main
 
 import (
 	"fmt"
+	"github.com/fogleman/gg"
 	"image"
 	"math"
 	"math/rand"
-	"net/http"
 	"os"
 	"sort"
-	"text/template"
 	"time"
-
-	"github.com/fogleman/gg"
 )
 
 var number_of_polygons = 100
@@ -249,12 +246,12 @@ func successor(p []Entity) (e Entity) {
 	return p[0]
 }
 
-func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
+func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	start := time.Now()
 	fmt.Println("Running evolve_pictures")
 	match := false
-	//	img := loadImg("./test_imgs/mona1.png")
+	img := loadImg("./test_imgs/mona1.png")
 
 	test_img := generateEntity(img)
 	population := generatePopulation(test_img.DNA)
@@ -262,7 +259,6 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 	prev_best := test_img
 	peakEntity := test_img
 	prev_best.Fitness = int64(9999999)
-	d := Data{}
 
 	for !match {
 		generation++
@@ -272,7 +268,6 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			peakEntity = best
 		}
 
-		//t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/test.html")
 		if best.Fitness < 20 {
 			match = true
 		} else {
@@ -283,18 +278,10 @@ func Run(w http.ResponseWriter, r *http.Request, img *image.RGBA) {
 			time_taken := time.Since(start)
 			gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
 
-			d = Data{Time: fmt.Sprint(time_taken), Fitness: fmt.Sprint(best.Fitness), Peak: fmt.Sprint(peakEntity.Fitness), Generation: fmt.Sprint(generation),
-				Population: fmt.Sprint(PopulationSize), SizePool: fmt.Sprint(Poolsize)}
-			t, err := template.ParseFiles("/home/damien/golang/ga/vistwitch/templates/picture.html")
-			t.Execute(w, d)
-			if err != nil {
-				panic(err)
-			}
 			// Save Points
 			if generation%100 == 0 {
 				fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				fmt.Println("\nStats : ", d)
 			}
 		}
 	}
