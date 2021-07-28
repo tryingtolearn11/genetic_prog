@@ -14,9 +14,9 @@ import (
 )
 
 // mona1 : 150 x 225
-var number_of_polygons = 100
+var number_of_polygons = 250
 var mutationRate = 0.01
-var PopulationSize = 100
+var PopulationSize = 50
 var Poolsize = 15
 
 // load the parent image
@@ -71,8 +71,8 @@ func generatePolygon(width int, height int) (polygon Polygon) {
 	p1 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
 	//p2 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
 	//p3 := Point{X: rand.Intn(width), Y: rand.Intn(height)}
-	p2 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
-	p3 := Point{X: p1.X + (rand.Intn(100) - 15), Y: p1.Y + (rand.Intn(100) - 15)}
+	p2 := Point{X: p1.X + (rand.Intn(70) - 30), Y: p1.Y + (rand.Intn(70) - 30)}
+	p3 := Point{X: p1.X + (rand.Intn(70) - 30), Y: p1.Y + (rand.Intn(70) - 30)}
 	polygon = Polygon{
 		PointOne:   p1,
 		PointTwo:   p2,
@@ -103,16 +103,17 @@ func display(width int, height int, pa []Polygon) *image.RGBA {
 // Prints the Data to Screen
 func displayData(width int, height int, data Data) {
 	const s = 250
+	const y = 50
 	dc := gg.NewContext(width, height)
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
-	dc.DrawStringAnchored("Time : "+data.Time, s/2, 25, 0.5, 0.5)
-	dc.DrawStringAnchored("Generation : "+data.Generation, s/2, 50, 0.5, 0.5)
-	dc.DrawStringAnchored("Fitness : "+data.Fitness, s/2, 75, 0.5, 0.5)
-	dc.DrawStringAnchored("Peak : "+data.Peak, s/2, 100, 0.5, 0.5)
-	dc.DrawStringAnchored("Pool Size : "+data.SizePool, s/2, 125, 0.5, 0.5)
-	dc.DrawStringAnchored("Population : "+data.Population, s/2, 150, 0.5, 0.5)
+	dc.DrawStringAnchored("Time : "+data.Time, s/2, y, 0.5, 0.5)
+	dc.DrawStringAnchored("Generation : "+data.Generation, s/2, y+25, 0.5, 0.5)
+	dc.DrawStringAnchored("Fitness : "+data.Fitness, s/2, y+50, 0.5, 0.5)
+	dc.DrawStringAnchored("Peak : "+data.Peak, s/2, y+75, 0.5, 0.5)
+	dc.DrawStringAnchored("Pool Size : "+data.SizePool, s/2, y+100, 0.5, 0.5)
+	dc.DrawStringAnchored("Population : "+data.Population, s/2, y+125, 0.5, 0.5)
 	dc.SavePNG("../static/pictures/" + "data.png")
 }
 
@@ -299,11 +300,11 @@ func main() {
 			d = Data{Time: fmt.Sprint(time_taken), Fitness: fmt.Sprint(best.Fitness), Peak: fmt.Sprint(peakEntity.Fitness), Generation: fmt.Sprint(generation),
 				Population: fmt.Sprint(PopulationSize), SizePool: fmt.Sprint(len(pool))}
 
+			displayData(250, 350, d)
 			// Save Points
 			if generation%10 == 0 {
 				//fmt.Printf("\rTime : %s | Generation: %d | Fitness: %d | PoolSize: %d | Peak: %d |", time_taken, generation, best.Fitness, len(pool), peakEntity.Fitness)
 				gg.SavePNG("../static/pictures/"+"fogbranch.png", peakEntity.DNA)
-				displayData(250, 350, d)
 				//fmt.Println("\nStats : ", d)
 			}
 		}
