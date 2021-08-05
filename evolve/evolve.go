@@ -14,7 +14,7 @@ import (
 )
 
 // mona1 : 150 x 225
-var number_of_polygons = 250
+var number_of_polygons = 350
 var mutationRate = 0.01
 var PopulationSize = 50
 var Poolsize = 15

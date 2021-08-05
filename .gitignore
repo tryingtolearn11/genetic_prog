@@ -18,3 +18,7 @@
 static
 *.png
 *.jpg
+
+
+# Allow
+!/stages
