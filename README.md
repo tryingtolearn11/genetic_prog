@@ -6,8 +6,12 @@
 
 Given a Random String (Sentence), We can evolve a pool of species mimicking
 natural selection in order to find the String of Best Fit.
-<h3> Example </h3>
+<h3> Example: </h3>
 <img src="https://github.com/tryingtolearn11/genetic_prog/blob/main/stages/part1/1.png" width=450 height=80></img>
+<h3> Successful Match Found </h3>
+<img src="https://github.com/tryingtolearn11/genetic_prog/blob/main/stages/part1/2.png" width=450 height=80></img>
+
+
 
 
 <h1>Part Two: Evolving Images</h1>
